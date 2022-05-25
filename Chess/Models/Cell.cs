@@ -7,11 +7,9 @@
         public bool LegalMove { get; set; }
         bool IsActive { get; set; }
 
-        public Cell(int x, int y, Piece? piece = null, bool legalMove = false)
+        public Cell(int x, int y)
         {
-            Field = [x, y];
-            Piece = piece;
-            LegalMove = legalMove;
+            Field = new Squere[x, y];
         }
 
         public bool isOccupied()
