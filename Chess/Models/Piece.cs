@@ -1,8 +1,8 @@
 ﻿namespace Chess.Models
 {
-    public class Piece
+    interface Piece
     {
-        public string? Type { get; set; }
-        public bool Colour { get; set; }
+        bool Color { get; set; }
+        void Move(Squere fromSquare, Squere toSquare);
     }
 }

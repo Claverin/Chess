@@ -2,15 +2,21 @@
 {
     public class Cell
     {
-        public int RowNumber { get; set; }
-        public int ColumnNumber { get; set; }
-        public bool CurrentlyOccupied { get; set; }
-        public bool LegalNextMove { get; set; }
+        public Squere[,] Field { get; set; }
+        public Piece? Piece { get; set; }
+        public bool LegalMove { get; set; }
+        bool IsActive { get; set; }
 
-        public Cell(int x, int y)
+        public Cell(int x, int y, Piece? piece = null, bool legalMove = false)
         {
-            RowNumber = x;
-            ColumnNumber = y;
+            Field = [x, y];
+            Piece = piece;
+            LegalMove = legalMove;
+        }
+
+        public bool isOccupied()
+        {
+            return Piece != null;
         }
     }
 }

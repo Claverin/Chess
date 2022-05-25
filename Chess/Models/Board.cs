@@ -3,16 +3,16 @@
     public class Board
     {
         readonly List<PieceState>? Pieces;
-
-        public void PlacePiece(Piece piece, Squere squere)
+        public string? activePlayer { get; set; }
+        public string? activeField { get; set; }
+        public Board()
         {
-
+            BoardCreate();
         }
-        public void MovePiece(Squere fromSquare, Squere toSquare)
+        private void BoardCreate(Squere squere)
         {
-
         }
-        public void RemovePiece(Squere squere)
+        public void RemovePiece(Squere squere);
         {
 
         }
