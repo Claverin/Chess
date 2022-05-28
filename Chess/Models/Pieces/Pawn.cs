@@ -2,9 +2,10 @@
 {
     public class Pawn : Piece
     {
-        public bool Color { get; set; }
-
-        public void Move(Squere fromSquare, Squere toSquare)
+        public Pawn(Color color) : base(color)
+        {
+        }
+        public void Move(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
         }

@@ -15,7 +15,19 @@ namespace Chess.Controllers
 
         public IActionResult GameBoard()
         {
+            var game = new Game();
+            game.activePlayer = Color.Black;
             return View();
+        }
+
+        public void MovePiece()
+        {
+            if(CheckLegalMove)
+        }
+
+        public bool CheckLegalMove()
+        {
+            return true;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

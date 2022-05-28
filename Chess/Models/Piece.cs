@@ -1,8 +1,15 @@
 ﻿namespace Chess.Models
 {
-    public interface Piece
+    public abstract class Piece
     {
-        bool Color { get; set; }
-        void Move(Squere fromSquare, Squere toSquare);
+        public Color Color { get; set; }
+        public bool IsActive { get; set; }
+        public void Move(Cell fromCell, Cell toCell) { }
+
+        public Piece(Color color)
+        {
+            this.Color = color;
+            this.IsActive = false;
+        }
     }
 }

@@ -1,65 +1,57 @@
-﻿namespace Chess.Models
+﻿using Chess.Models.Pieces;
+
+namespace Chess.Models
 {
     public class Board
     {
-        public List<Cell> Cells;
-        public string? activePlayer { get; set; }
+        public int Id { get; set; }
+        public List<Cell> Cells = new List<Cell>();
         public string? activeField { get; set; }
         public Board()
         {
             Create();
-            PutPieces();
+            PutPiecesOnBoard();
         }
 
         private void Create()
         {
-            var board = new Board();
-
             for (int i = 0; i < 8; i++)
             {
-                for(var j = 0; j < 8; j++)
+                for (var j = 0; j < 8; j++)
                 {
-                    var cellss = new Cell(i, j);
-                    Cells.Add(cellss);
+                    Cells.Add(new Cell(i, j));
                 }
             }
         }
-        private void PutPieces()
+
+        //Default arg to function
+        //or enum
+        private void PutOneArmy(Color color, string position = "top")
         {
-            foreach(var cell in Cells)
+            var x = 0;
+            if (position == "bottom")
             {
-                //Piony
-                if(cell.Field == [,2] || [,7])
-                {
-                    cell.Piece = Piece.Pawn;
-                    cell.Piece.Color = false;
-                }
-                //Wieże
-                if (cell.Field == [1, 1] || [1, 8] || [8, 1] || [8, 8])
-                {
-                    cell.Piece = Rock;
-                }
-                //Konie
-                if (cell.Field == [1, 2] || [1, 7] || [8, 2] || [8, 7])
-                {
-                    cell.Piece = Knight;
-                }
-                //Bishop
-                if (cell.Field == [1, 3] || [1, 6] || [8, 3] || [8, 6])
-                {
-                    cell.Piece = Bishop;
-                }
-                //Królowa
-                if (cell.Field == [1, 5] || [8, 6])
-                {
-                    cell.Piece = Queen;
-                }
-                //Król
-                if (cell.Field == [1, 6] || [8, 5])
-                {
-                    cell.Piece = King;
-                }
+                x = 7;
             }
+            List<Cell> rulerPieces = Cells.FindAll(cell => cell.Field.x == x);
+            rulerPieces[0].Piece = new Rock(color);
+            rulerPieces[1].Piece = new Knight(color);
+            rulerPieces[2].Piece = new Bishop(color);
+            rulerPieces[3].Piece = new Queen(color);
+            rulerPieces[4].Piece = new King(color);
+            rulerPieces[5].Piece = new Bishop(color);
+            rulerPieces[6].Piece = new Knight(color);
+            rulerPieces[7].Piece = new Rock(color);
+            x = x == 0 ? 1 : 6;
+            foreach (var cell in Cells.FindAll(cell => cell.Field.x == x))
+            {
+                cell.Piece = new Pawn(color);
+            }
+        }
+        private void PutPiecesOnBoard()
+        {
+            PutOneArmy(Color.Black);
+            PutOneArmy(Color.White,"bottom");
         }
     }
 }

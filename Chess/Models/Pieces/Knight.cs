@@ -1,10 +1,11 @@
 ﻿namespace Chess.Models.Pieces
 {
-    public class Pawn : Piece
+    public class Knight : Piece
     {
-        public bool Color { get; set; }
-
-        public void Move(Squere fromSquare, Squere toSquare)
+        public Knight(Color color) : base(color)
+        {
+        }
+        public void Move(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
         }
