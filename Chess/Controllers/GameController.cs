@@ -1,4 +1,7 @@
-﻿using Chess.Models;
+﻿using Chess.Data;
+using Chess.Models;
+using Chess.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,19 +9,24 @@ namespace Chess.Controllers
 {
     public class GameController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<GameController> _logger;
+        private readonly ApplicationDbContext _db;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public GameController(ILogger<HomeController> logger)
+        public GameController(ILogger<GameController> logger, ApplicationDbContext db, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
+            _db = db;
+            _userManager = userManager;
         }
 
         public IActionResult GameBoard()
         {
             var game = new Game();
-            game.activePlayer = Color.Black;
-            var cellNumbers = game.board.Cells.Count();
-            return View(cellNumbers);
+
+            var cellNumber = game.board.Cells.Count();
+
+            return View(cellNumber);
         }
 
         public void MovePiece()
