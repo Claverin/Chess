@@ -17,12 +17,16 @@ namespace Chess.Controllers
         {
             var game = new Game();
             game.activePlayer = Color.Black;
-            return View();
+            var cellNumbers = game.board.Cells.Count();
+            return View(cellNumbers);
         }
 
         public void MovePiece()
         {
-            if(CheckLegalMove)
+            if (CheckLegalMove())
+            {
+
+            }
         }
 
         public bool CheckLegalMove()
