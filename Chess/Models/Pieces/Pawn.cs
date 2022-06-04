@@ -4,14 +4,11 @@
     {
         public Pawn(Color color) : base(color)
         {
+            Image = "/img/" + color + "/Pawn.png";
         }
         public void Move(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
-        }
-        override public string GetImage()
-        {
-            return "/img/Pawn.jpg";
         }
     }
 }

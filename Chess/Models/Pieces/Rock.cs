@@ -4,14 +4,11 @@
     {
         public Rock(Color color) : base(color)
         {
+            Image = "/img/" + color + "/Rock.png";
         }
-        new public void Move(Cell fromCell, Cell toCell)
+        public void Move(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
-        }
-        override public string GetImage()
-        {
-            return "/img/Rock.jpg";
         }
     }
 }

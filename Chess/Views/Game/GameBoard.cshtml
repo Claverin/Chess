@@ -16,15 +16,13 @@
             }
             if(@cell.Piece == null)
             {
-                <div class="col-1" style="background-color:@cell.Image;">
-                    <div style="padding-bottom: 115%;">
-                    </div>
+                <div class="col-1" style="background-color:@cell.FieldColor; padding-top:8%;">
                 </div>
             }
             else
             {
-                <div class="col-1" style="background-color:@cell.Image;">
-                    <img style="margin:0; padding:0; padding-bottom: 110%" src=@cell.Piece.GetImage()>
+                <div class="col-1" style="background-color:@cell.FieldColor; padding-top:5%">
+                    <img style="margin:0; padding:0;" src=@cell.Piece.Image>
                 </div>
             }
             if(i%8==7)
@@ -33,6 +31,10 @@
             }
             i++;
         }
-    </.div>
+    </div>
+    <div>
+        Move:<br />
+        White Score:<br />
+        Black Score:<br />
+    </div>
 </div>
-

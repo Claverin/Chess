@@ -4,14 +4,11 @@
     {
         public Knight(Color color) : base(color)
         {
+            Image = "/img/" + color + "/Knight.png";
         }
         public void Move(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
-        }
-        override public string GetImage()
-        {
-            return "/img/Knight.jpg";
         }
     }
 }

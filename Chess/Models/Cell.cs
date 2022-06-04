@@ -4,12 +4,12 @@
     {
         public Coordinates Field { get; set; }
         public Piece? Piece { get; set; }
-        public string Image { get; set; }
+        public string FieldColor { get; set; }
 
         public Cell(int x, int y, Color color)
         {
             Field = new Coordinates(x, y);
-            Image = color == Color.White ? "white" : "black";
+            FieldColor = color == Color.White ? "#C1B7B5" : "#323232";
         }
 
         public bool isOccupied()

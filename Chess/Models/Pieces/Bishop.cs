@@ -4,15 +4,11 @@
     {
         public Bishop(Color color) : base(color)
         {
+            Image = "/img/" + color + "/Bishop.png";
         }
-        public void Move(Cell fromCell, Cell toCell)
+        new public void Move(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
-        }
-
-        override public string GetImage()
-        {
-            return "/img/Bishop.jpg";
         }
     }
 }
