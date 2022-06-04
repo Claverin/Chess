@@ -6,8 +6,6 @@ After registration you can chat online with person that you play with or browse 
 Application is based on rules from:
 https://en.wikipedia.org/wiki/Chess
 
-# 🛑 Work in Progress 🛑
-
 ## Move into
 * [Features](#features-)
   * [Guest account features](#guest)
@@ -56,7 +54,7 @@ https://en.wikipedia.org/wiki/Chess
 ### Main Page
 ![MainPage](./Screenshots/x.png)
 ### Board
-![Board](./Screenshots/x.png)
+![Board](./Screenshots/ChessSettleUp.jpg)
 ### Account Creation
 ![AccountCreation](./Screenshots/x.png)
 ### Account Settings
