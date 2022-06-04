@@ -1,10 +1,32 @@
-﻿@model Chess.Models.ViewModels.PlayVM
+﻿@model Chess.Models.Game
 @{
     ViewData["Title"] = "Chess Application";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Click to Play</h1>
-    @Model.Boards.
 
+
+<div class="container">
+    <div class="row">
+        @for (var i = 0; i < 8; i++) {
+            for (var j = 0; j < 8; j++) {
+                if(j==0)
+                {
+                    <div class="col-2"></div>
+                }
+                if((i + j) % 2 == 0)
+                {
+                    <img class="col-1" src="~/img/white.jpg" style="padding:0;margin:0 auto;"/>
+                }
+                else
+                {
+                    <img class="col-1" src="~/img/black.jpg" style="padding:0;margin:0 auto;"/>
+                }
+                if(j==7)
+                {
+                    <div class="col-2"></div>
+                }
+            }
+        }
+    </div>
 </div>
+
