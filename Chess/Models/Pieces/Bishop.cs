@@ -9,5 +9,10 @@
         {
             throw new NotImplementedException();
         }
+
+        override public string GetImage()
+        {
+            return "/img/Bishop.jpg";
+        }
     }
 }

@@ -2,18 +2,18 @@
 {
     public class Game
     {
-        public Board board { get; set; }
-        public Color activePlayer { get; set; }
+        public Board Board { get; set; }
+        public Color ActivePlayer { get; set; }
 
         public Game()
         {
-            this.board = new Board();
-            this.activePlayer = Color.White;
+            this.Board = new Board();
+            this.ActivePlayer = Color.White;
         }
-
-            //var playerOne = new Player()
-            //playerOne.Colour = Color.White;
-            //var playerTwo = new Player()
-            //playerOne.Colour = Color.Black;
+        
+        //var playerOne = new Player()
+        //playerOne.Colour = Color.White;
+        //var playerTwo = new Player()
+        //playerOne.Colour = Color.Black;
     }
 }

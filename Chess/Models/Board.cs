@@ -19,9 +19,22 @@ namespace Chess.Models
             {
                 for (var j = 0; j < 8; j++)
                 {
-                    Cells.Add(new Cell(i, j));
+                    if ((i + j) % 2 == 0)
+                    {
+                        Cells.Add(new Cell(i, j,Color.White));
+                    }
+                    else
+                    {
+                        Cells.Add(new Cell(i, j, Color.Black));
+                    }
                 }
             }
+        }
+
+        private void PutPiecesOnBoard()
+        {
+            PutOneArmy(Color.Black);
+            PutOneArmy(Color.White, "bottom");
         }
 
         //Default arg to function
@@ -47,11 +60,6 @@ namespace Chess.Models
             {
                 cell.Piece = new Pawn(color);
             }
-        }
-        private void PutPiecesOnBoard()
-        {
-            PutOneArmy(Color.Black);
-            PutOneArmy(Color.White,"bottom");
         }
     }
 }

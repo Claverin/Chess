@@ -1,6 +1,5 @@
 ﻿using Chess.Data;
 using Chess.Models;
-using Chess.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -22,11 +21,8 @@ namespace Chess.Controllers
 
         public IActionResult GameBoard()
         {
-            var game = new Game();
-
-            var cellNumber = game.board.Cells.Count();
-
-            return View(cellNumber);
+            Game game = new Game();
+            return View(game);
         }
 
         public void MovePiece()

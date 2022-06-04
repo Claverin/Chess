@@ -11,5 +11,7 @@
             this.Color = color;
             this.IsActive = false;
         }
+
+        public abstract string GetImage();
     }
 }

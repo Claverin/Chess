@@ -1,32 +1,38 @@
 ﻿@model Chess.Models.Game
 @{
     ViewData["Title"] = "Chess Application";
+    int i = 0;
 }
 
 
 
 <div class="container">
-    <div class="row">
-        @for (var i = 0; i < 8; i++) {
-            for (var j = 0; j < 8; j++) {
-                if(j==0)
-                {
-                    <div class="col-2"></div>
-                }
-                if((i + j) % 2 == 0)
-                {
-                    <img class="col-1" src="~/img/white.jpg" style="padding:0;margin:0 auto;"/>
-                }
-                else
-                {
-                    <img class="col-1" src="~/img/black.jpg" style="padding:0;margin:0 auto;"/>
-                }
-                if(j==7)
-                {
-                    <div class="col-2"></div>
-                }
+    <div class="row" style="max-width:100%;">
+        @foreach(var cell in @Model.Board.Cells)
+        {
+            if(i%8==0)
+            {
+                <div class="col-2" style="margin:0; padding:0;"></div>
             }
+            if(@cell.Piece == null)
+            {
+                <div class="col-1" style="background-color:@cell.Image;">
+                    <div style="padding-bottom: 115%;">
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-1" style="background-color:@cell.Image;">
+                    <img style="margin:0; padding:0; padding-bottom: 110%" src=@cell.Piece.GetImage()>
+                </div>
+            }
+            if(i%8==7)
+            {
+                <div class="col-2" style="margin:0; padding:0;"></div>
+            }
+            i++;
         }
-    </div>
+    </.div>
 </div>
 

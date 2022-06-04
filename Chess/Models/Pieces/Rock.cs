@@ -5,9 +5,13 @@
         public Rock(Color color) : base(color)
         {
         }
-        public void Move(Cell fromCell, Cell toCell)
+        new public void Move(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
+        }
+        override public string GetImage()
+        {
+            return "/img/Rock.jpg";
         }
     }
 }
