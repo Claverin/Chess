@@ -33,13 +33,11 @@ namespace Chess.Models
 
         private void PutPiecesOnBoard()
         {
-            PutOneArmy(Color.Black);
-            PutOneArmy(Color.White, "bottom");
+            PutPiecesOnBoard(Color.Black);
+            PutPiecesOnBoard(Color.White, "bottom");
         }
 
-        //Default arg to function
-        //or enum
-        private void PutOneArmy(Color color, string position = "top")
+        private void PutPiecesOnBoard(Color color, string position = "top")
         {
             var x = 0;
             if (position == "bottom")

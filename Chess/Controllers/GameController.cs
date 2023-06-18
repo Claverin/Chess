@@ -22,20 +22,9 @@ namespace Chess.Controllers
         public IActionResult GameBoard()
         {
             Game game = new Game();
+            game.Play();
+
             return View(game);
-        }
-
-        public void MovePiece()
-        {
-            if (CheckLegalMove())
-            {
-
-            }
-        }
-
-        public bool CheckLegalMove()
-        {
-            return true;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

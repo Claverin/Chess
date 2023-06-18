@@ -19,4 +19,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\NewFolder\" />
+    <Folder Include="Models\ViewModels\" />
+  </ItemGroup>
+
 </Project>
