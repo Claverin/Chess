@@ -2,13 +2,24 @@
 {
     public class Pawn : Piece
     {
+        public Cell StartingPlace { get; set; }
         public Pawn(Color color) : base(color)
         {
             Image = "/img/" + color + "/Pawn.png";
         }
-        public void Move(Cell fromCell, Cell toCell)
+        public bool Move(Cell fromCell, Cell toCell, int BoardSize)
         {
-            throw new NotImplementedException();
+            if(fromCell.Field.x != toCell.Field.x)
+            {
+                return false;
+            }
+            if(StartingPlace.Field.y == BoardSize)
+            {
+            }
+            if (fromCell.Field.y-2 != toCell.Field.y) {
+
+            }
+            return true;
         }
     }
 }

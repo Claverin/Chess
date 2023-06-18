@@ -36,12 +36,11 @@
 
             }
         }
-        public void Pick()
+        public bool Pick()
         {
-            EventHandler = true;
             return true;
         }
-        public void CheckLegalMove()
+        public bool CheckLegalMove()
         {
             return true;
         }
@@ -49,7 +48,7 @@
         {
             return true;
         }
-        public void CheckGameState()
+        public bool CheckGameState()
         {
             return true;
         }

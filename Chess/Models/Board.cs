@@ -7,17 +7,19 @@ namespace Chess.Models
         public int Id { get; set; }
         public List<Cell> Cells = new List<Cell>();
         public string? activeField { get; set; }
+        public int Size { get; set; } //Default
         public Board()
         {
+            Size = 8;
             Create();
             PutPiecesOnBoard();
         }
 
         private void Create()
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < Size; i++)
             {
-                for (var j = 0; j < 8; j++)
+                for (var j = 0; j < Size; j++)
                 {
                     if ((i + j) % 2 == 0)
                     {
