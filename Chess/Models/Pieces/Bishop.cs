@@ -6,9 +6,13 @@
         {
             Image = "/img/" + color + "/Bishop.png";
         }
-        new public void Move(Cell fromCell, Cell toCell)
+        new public bool Move(Cell fromCell, Cell toCell)
         {
-            throw new NotImplementedException();
+            if(false)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

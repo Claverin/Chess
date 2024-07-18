@@ -9,7 +9,7 @@
         public Cell(int x, int y, Color color)
         {
             Field = new Coordinates(x, y);
-            FieldColor = color == Color.White ? "#C1B7B5" : "#323232";
+            FieldColor = color == Color.White ? "#dcd3ea" : "#8a785d";
         }
 
         public bool isOccupied()
