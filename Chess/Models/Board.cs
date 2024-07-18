@@ -7,10 +7,11 @@ namespace Chess.Models
         public int Id { get; set; }
         public List<Cell> Cells = new List<Cell>();
         public string? activeField { get; set; }
-        public int Size { get; set; } //Default
+        public int Size { get; set; }
         public Board()
         {
             Size = 8;
+            PieceIdManager.Reset();
             Create();
             PutPiecesOnBoard();
         }
@@ -36,30 +37,34 @@ namespace Chess.Models
         private void PutPiecesOnBoard()
         {
             PutPiecesOnBoard(Color.Black);
-            PutPiecesOnBoard(Color.White, "bottom");
+            PutPiecesOnBoard(Color.White);
         }
 
-        private void PutPiecesOnBoard(Color color, string position = "top")
+        private void PutPiecesOnBoard(Color color)
         {
-            var x = 0;
-            if (position == "bottom")
-            {
-                x = 7;
-            }
+            int x = color == Color.White ? 7 : 0;
             List<Cell> rulerPieces = Cells.FindAll(cell => cell.Field.x == x);
-            rulerPieces[0].Piece = new Rock(color);
-            rulerPieces[1].Piece = new Knight(color);
-            rulerPieces[2].Piece = new Bishop(color);
-            rulerPieces[3].Piece = new Queen(color);
-            rulerPieces[4].Piece = new King(color);
-            rulerPieces[5].Piece = new Bishop(color);
-            rulerPieces[6].Piece = new Knight(color);
-            rulerPieces[7].Piece = new Rock(color);
-            x = x == 0 ? 1 : 6;
+
+            var pieceOrder = new Piece[]
+            {
+                new Rock(color), new Knight(color), new Bishop(color), new Queen(color),
+                new King(color), new Bishop(color), new Knight(color), new Rock(color)
+            };
+
+            for (int i = 0; i < pieceOrder.Length; i++)
+            {
+                rulerPieces[i].Piece = pieceOrder[i];
+            }
+
+            x = (x == 0) ? 1 : 6;
             foreach (var cell in Cells.FindAll(cell => cell.Field.x == x))
             {
                 cell.Piece = new Pawn(color);
             }
+        }
+        public Piece FindPieceById(int id)
+        {
+            return Cells.Select(cell => cell.Piece).FirstOrDefault(piece => piece != null && piece.Id == id);
         }
     }
 }

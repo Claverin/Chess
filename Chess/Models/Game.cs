@@ -2,55 +2,44 @@
 {
     public class Game
     {
+        public List<Player> Players { get; set; }
+        public int NumberOfPlayers { get; set; }
         public Board Board { get; set; }
-        public Color ActivePlayer { get; set; }
-        public Color Winer { get; set; }
-        public bool InGame { get; set; } = false;
+        public Player ActivePlayer { get; set; }
+        public Color? Winner { get; set; } = null;
 
-        public Game()
+        public Game(int numberOfPlayers)
         {
-            this.Board = new Board();
-            var playerOne = new Player();
-            var playerTwo = new Player();
-            playerOne.Colour = Color.White;
-            playerTwo.Colour = Color.Black;
-            this.ActivePlayer = Color.White;
+            InitPlayers(numberOfPlayers);
+            CreateBoard();
+            ActivePlayer = Players[0];
         }
-        public bool Play()
+
+        public void InitPlayers(int numberOfPlayers)
         {
-            while (InGame)
+            if (NumberOfPlayers > 6)
             {
-                //this.ActivePlayer(MovePiece(Piece piece));
-                Pick();
-                CheckLegalMove();
-                Place();
-                //MovePiece(ActivePlayer);
-                //CheckGameState();
+                throw new ArgumentException("Number of players cannot exceed 6.");
             }
-            return true;
-        }
-        public void MovePiece(Color correctPlayer)
-        {
-            if (CheckLegalMove())
-            {
+            NumberOfPlayers = numberOfPlayers;
 
+            Players = new List <Player>();
+            Color[] availableColors = (Color[])Enum.GetValues(typeof(Color));
+
+            for (int i = 0; i < NumberOfPlayers; i++)
+            {
+                Player currentPlayer = new Player
+                {
+                    Colour = availableColors[i],
+                    Score = 0
+                };
+                Players.Add(currentPlayer);
             }
         }
-        public bool Pick()
+
+        public void CreateBoard()
         {
-            return true;
-        }
-        public bool CheckLegalMove()
-        {
-            return true;
-        }
-        public bool Place()
-        {
-            return true;
-        }
-        public bool CheckGameState()
-        {
-            return true;
+            Board = new Board();
         }
     }
 }

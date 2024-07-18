@@ -6,27 +6,30 @@
 <div class="container">
     <center>
         <div class="row" style="max-width:800px; max-height:800px; min-width:800px; min-height:800px;">
-            @foreach(var cell in @Model.Board.Cells)
+            @foreach (var cell in @Model.Board.Cells)
             {
-                if(@cell.Piece == null)
-                {
-                    <div style="background-color:@cell.FieldColor; margin:0; padding:0; height:100px; max-height:100px; width:100px; position: relative;">
-                    </div>
-                }
-                else
-                {
-                    <div onclickstyle="background-color:@cell.FieldColor; margin:0; padding:0; height:100px; max-height:100px; width:100px; position: relative;";>
-                        <a asp-action="Pick();">
-                            <img style="padding:30%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" src=@cell.Piece.Image; onclick=MovePiece();>
-                        </a>
-                    </div>
-                }
+                <div style="background-color:@cell.FieldColor; margin:0; padding:0; height:100px; max-height:100px; width:100px; position: relative;">
+                    @if (@cell.Piece != null)
+                    {
+                        @if(@cell.Piece.Color == @Model.ActivePlayer.Colour)
+                        {
+                            <a asp-controller="Game" asp-action="MovePiece" asp-route-pieceId="@cell.Piece.Id">
+                                <img style="padding:30%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" src=@cell.Piece.Image>
+                            </a>
+                        }
+                        else
+                        {
+                            <img style="padding:30%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" src=@cell.Piece.Image>
+                        }
+                    }
+                </div>
             }
         </div>
     </center>
     <div style="padding-top:5%;">
-        Move: @Model.ActivePlayer <br />
-        White Score:<br />
-        Black Score:<br />
+        Move: @Model.ActivePlayer.Colour <br /><br />
+        White Score: @Model.Players[0].Score<br />
+        Black Score: @Model.Players[1].Score<br />
+        Number of Player: @Model.NumberOfPlayers
     </div>
 </div>

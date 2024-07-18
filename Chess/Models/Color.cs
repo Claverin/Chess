@@ -2,7 +2,11 @@
 {
     public enum Color
     {
+        White,
         Black,
-        White
+        Red,
+        Green,
+        Blue,
+        Purple
     }
 }
