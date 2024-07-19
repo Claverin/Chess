@@ -62,9 +62,9 @@ namespace Chess.Models
                 cell.Piece = new Pawn(color);
             }
         }
-        public Piece FindPieceById(int id)
+        public Cell FindCellByPieceId(int pieceId)
         {
-            return Cells.Select(cell => cell.Piece).FirstOrDefault(piece => piece != null && piece.Id == id);
+            return Cells.FirstOrDefault(cell => cell.Piece != null && cell.Piece.Id == pieceId);
         }
     }
 }

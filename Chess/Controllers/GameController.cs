@@ -40,21 +40,38 @@ namespace Chess.Controllers
 
         public IActionResult MovePiece(int pieceId)
         {
-            var game = HttpContext.Session.Get<Game>("Game");
-            if (game == null)
-            {
-                return RedirectToAction("StartGame");
-            }
-
-            var piece = game.Board.FindPieceById(pieceId);
-            if (piece != null)
-            {
-                
-            }
+            Lock();
+            var cell = game.Board.FindCellByPieceId(pieceId);
+            var previousColor = cell.FieldColor;
+            cell.FieldColor = "#FFC300";
+            CheckLegalMoves(pieceId);
+            WaitForUser();
+            TransferPiece();
+            Unlock();
 
             Console.WriteLine("Tst: " + pieceId);
             HttpContext.Session.Set("Game", game);
             return RedirectToAction("GameBoard");
+        }
+
+        public void Lock()
+        {
+        }
+
+        public void CheckLegalMoves(int piece)
+        {
+        }
+
+        public void WaitForUser()
+        {
+        }
+
+        public void TransferPiece()
+        {
+        }
+
+        public void Unlock()
+        {
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
