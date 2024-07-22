@@ -5,7 +5,7 @@
         public Cell StartingPlace { get; set; }
         public Pawn(Color color) : base(color)
         {
-            Image = "/img/" + color + "/Pawn.png";
+            Image = "/img/" + color + "/Pawn.svg";
         }
         public bool Move(Cell fromCell, Cell toCell, int BoardSize)
         {

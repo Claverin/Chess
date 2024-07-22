@@ -4,7 +4,7 @@
     {
         public Rock(Color color) : base(color)
         {
-            Image = "/img/" + color + "/Rock.png";
+            Image = "/img/" + color + "/Rock.svg";
         }
         public void Move(Cell fromCell, Cell toCell)
         {

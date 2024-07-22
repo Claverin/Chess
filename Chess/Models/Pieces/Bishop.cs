@@ -4,7 +4,7 @@
     {
         public Bishop(Color color) : base(color)
         {
-            Image = "/img/" + color + "/Bishop.png";
+            Image = "/img/" + color + "/Bishop.svg";
         }
         new public bool Move(Cell fromCell, Cell toCell)
         {

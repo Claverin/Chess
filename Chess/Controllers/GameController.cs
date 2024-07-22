@@ -4,6 +4,7 @@ using Chess.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace Chess.Controllers
 {
@@ -12,7 +13,6 @@ namespace Chess.Controllers
         private readonly ILogger<GameController> _logger;
         private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
-        Game game;
 
         public GameController(ILogger<GameController> logger, ApplicationDbContext db, UserManager<IdentityUser> userManager)
         {
@@ -40,17 +40,31 @@ namespace Chess.Controllers
 
         public IActionResult MovePiece(int pieceId)
         {
-            Lock();
-            var cell = game.Board.FindCellByPieceId(pieceId);
-            var previousColor = cell.FieldColor;
-            cell.FieldColor = "#FFC300";
-            CheckLegalMoves(pieceId);
-            WaitForUser();
-            TransferPiece();
-            Unlock();
+            var game = HttpContext.Session.Get<Game>("Game");
+            if (game == null)
+            {
+                return RedirectToAction("StartGame");
+            }
 
-            Console.WriteLine("Tst: " + pieceId);
-            HttpContext.Session.Set("Game", game);
+            var cell = game.Board.FindCellByPieceId(pieceId);
+            if (cell != null)
+            {
+                var previousColor = cell.FieldColor;
+                cell.FieldColor = "#FFC300";
+                CheckLegalMoves(pieceId);
+                WaitForUser();
+                TransferPiece();
+                //RemovePiece(cell);
+
+                HttpContext.Session.Set("Game", game);
+
+                var testGame = HttpContext.Session.Get<Game>("Game");
+            }
+            else
+            {
+                Console.WriteLine($"Cell not found for Piece ID: {pieceId}");
+            }
+
             return RedirectToAction("GameBoard");
         }
 
@@ -72,6 +86,10 @@ namespace Chess.Controllers
 
         public void Unlock()
         {
+        }
+        public void RemovePiece(Cell cell)
+        {
+            cell.Piece = null;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -12,7 +12,7 @@
             FieldColor = color == Color.White ? "#ebecd0" : "#739552";
         }
 
-        public bool isOccupied()
+        public bool IsOccupied()
         {
             return Piece != null;
         }

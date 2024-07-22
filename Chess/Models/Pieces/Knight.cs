@@ -4,7 +4,7 @@
     {
         public Knight(Color color) : base(color)
         {
-            Image = "/img/" + color + "/Knight.png";
+            Image = "/img/" + color + "/Knight.svg";
         }
         public void Move(Cell fromCell, Cell toCell)
         {
