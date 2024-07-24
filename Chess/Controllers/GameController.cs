@@ -25,12 +25,12 @@ namespace Chess.Controllers
         {
             var game = new Game(numberOfPlayers);
             HttpContext.Session.Set("Game", game);
-            return RedirectToAction("GameBoard");
+            return View("GameBoard",game);
         }
 
         public IActionResult GameBoard()
         {
-            var game = HttpContext.Session.Get<Game>("Game");
+            Game game = HttpContext.Session.Get<Game>("Game");
             if (game == null)
             {
                 return RedirectToAction("StartGame");
@@ -40,13 +40,13 @@ namespace Chess.Controllers
 
         public IActionResult MovePiece(int pieceId)
         {
-            var game = HttpContext.Session.Get<Game>("Game");
+            Game game = HttpContext.Session.Get<Game>("Game");
             if (game == null)
             {
                 return RedirectToAction("StartGame");
             }
 
-            var cell = game.Board.FindCellByPieceId(pieceId);
+            Cell cell = game.Board.FindCellByPieceId(pieceId);
             if (cell != null)
             {
                 var previousColor = cell.FieldColor;
@@ -54,7 +54,7 @@ namespace Chess.Controllers
                 CheckLegalMoves(pieceId);
                 WaitForUser();
                 TransferPiece();
-                //RemovePiece(cell);
+                RemovePiece(cell);
 
                 HttpContext.Session.Set("Game", game);
 
@@ -64,8 +64,8 @@ namespace Chess.Controllers
             {
                 Console.WriteLine($"Cell not found for Piece ID: {pieceId}");
             }
-
-            return RedirectToAction("GameBoard");
+            
+            return View("GameBoard",game);
         }
 
         public void Lock()
