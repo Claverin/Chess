@@ -1,11 +1,12 @@
 ﻿using Chess.Models.Pieces;
+using System.Text.Json.Serialization;
 
 namespace Chess.Models
 {
     public class Board
     {
         public int Id { get; set; }
-        public List<Cell> Cells = new List<Cell>();
+        public List<Cell> Cells { get; set; } = new List<Cell>();
         public string? activeField { get; set; }
         public int Size { get; set; }
         public Board()
@@ -14,6 +15,16 @@ namespace Chess.Models
             PieceIdManager.Reset();
             Create();
             PutPiecesOnBoard();
+        }
+
+    
+        [JsonConstructorAttribute]
+        public Board(int id, List<Cell> cells, string? activeField, int size)
+        {
+            Id = id;
+            Cells = cells;
+            this.activeField = activeField;
+            Size = size;
         }
 
         private void Create()

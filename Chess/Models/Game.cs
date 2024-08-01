@@ -1,4 +1,6 @@
-﻿namespace Chess.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Chess.Models
 {
     public class Game
     {
@@ -8,6 +10,16 @@
         public Player ActivePlayer { get; set; }
         public Color? Winner { get; set; } = null;
 
+        [JsonConstructorAttribute]
+        public Game(List<Player> players, int numberOfPlayers, Board board, Player activePlayer, Color? winner)
+        {
+            Players = players;
+            NumberOfPlayers = numberOfPlayers;
+            Board = board;
+            ActivePlayer = activePlayer;
+            Winner = winner;
+        }
+
         public Game(int numberOfPlayers)
         {
             InitPlayers(numberOfPlayers);
@@ -15,7 +27,7 @@
             ActivePlayer = Players[0];
         }
 
-        public void InitPlayers(int numberOfPlayers)
+        private void InitPlayers(int numberOfPlayers)
         {
             if (NumberOfPlayers > 6)
             {
@@ -37,7 +49,7 @@
             }
         }
 
-        public void CreateBoard()
+        private void CreateBoard()
         {
             Board = new Board();
         }

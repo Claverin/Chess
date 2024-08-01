@@ -1,4 +1,6 @@
-﻿namespace Chess.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Chess.Models
 {
     public class Cell
     {
@@ -10,6 +12,14 @@
         {
             Field = new Coordinates(x, y);
             FieldColor = color == Color.White ? "#ebecd0" : "#739552";
+        }
+
+        [JsonConstructorAttribute]
+        public Cell(Coordinates field, Piece? piece, string fieldColor)
+        {
+            Field = field;
+            Piece = piece;
+            FieldColor = fieldColor;
         }
 
         public bool IsOccupied()
