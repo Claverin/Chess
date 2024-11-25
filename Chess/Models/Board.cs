@@ -65,12 +65,15 @@ namespace Chess.Models
             for (int i = 0; i < pieceOrder.Length; i++)
             {
                 rulerPieces[i].Piece = pieceOrder[i];
+                pieceOrder[i].CurrentPosition = rulerPieces[i].Field;
             }
 
             x = (x == 0) ? 1 : 6;
             foreach (var cell in Cells.FindAll(cell => cell.Field.x == x))
             {
-                cell.Piece = new Pawn(color);
+                var pawn = new Pawn(color);
+                cell.Piece = pawn;
+                pawn.CurrentPosition = cell.Field;
             }
         }
 

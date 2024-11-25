@@ -14,7 +14,7 @@
                         @if(@cell.Piece.Color == @Model.ActivePlayer.Colour)
                         {
                             <a asp-controller="Game" asp-action="MovePiece" asp-route-pieceId="@cell.Piece.Id">
-                                <img src=@cell.Piece.Image>
+                                <img src=@cell.Piece.Image>@cell.Piece.Id
                             </a>
                         }
                         else

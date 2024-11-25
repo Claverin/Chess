@@ -11,19 +11,13 @@ namespace Chess.Models
         public string Image { get; set; }
         public Color Color { get; set; }
         public bool Active { get; set; }
-        public Cell CurrentPosition { get; set; }
+        public Coordinates CurrentPosition { get; set; }
 
-        public Piece(Color color, Cell cell)
+        public Piece(Color color)
         {
             Id = PieceIdManager.GetNextId();
             Color = color;
-            CurrentPosition = cell;
             Active = true;
-        }
-
-        protected Piece(Color color)
-        {
-            Color = color;
         }
 
         //public abstract bool CanMove(Cell fromCell, Cell toCell, Board board);
