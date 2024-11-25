@@ -40,12 +40,11 @@ namespace Chess.Controllers
             if (cell != null)
             {
                 var previousColor = cell.FieldColor;
-                cell.FieldColor = "#FFC300";//yellow
-
+                cell.FieldColor = "#FFC300"; //yellow
                 //CheckLegalMoves(pieceId);
                 //WaitForUser();
                 //TransferPiece();
-                RemovePiece(cell);
+                //RemovePiece(cell);
 
                 HttpContext.Session.Set("Game", game);
 
@@ -59,7 +58,53 @@ namespace Chess.Controllers
             return View("GameBoard", game);
         }
 
-        public void Lock()
+        public bool IsPathClear(Cell fromCell, Cell toCell)
+        {
+            Game game = HttpContext.Session.Get<Game>("Game");
+
+            //up down
+            if (fromCell.Field.x == toCell.Field.x)
+            {
+                int direction = fromCell.Field.y < toCell.Field.y ? 1 : -1;
+                for (int y = fromCell.Field.y + direction; y != toCell.Field.y; y += direction)
+                {
+                    if (game.Board.FindCellByCoordinates(fromCell.Field.x, y).IsOccupied())
+                        return false;
+                }
+            }
+            //right left
+            else if (fromCell.Field.y == toCell.Field.y)
+            {
+                int direction = fromCell.Field.x < toCell.Field.x ? 1 : -1;
+                for (int x = fromCell.Field.x + direction; x != toCell.Field.x; x += direction)
+                {
+                    if (game.Board.FindCellByCoordinates(x, fromCell.Field.y).IsOccupied())
+                        return false;
+                }
+            }
+            //diagonal
+            else if (Math.Abs(fromCell.Field.x - toCell.Field.x) == Math.Abs(fromCell.Field.y - toCell.Field.y))
+            {
+                int xDirection = fromCell.Field.x < toCell.Field.x ? 1 : -1;
+                int yDirection = fromCell.Field.y < toCell.Field.y ? 1 : -1;
+
+                int x = fromCell.Field.x + xDirection;
+                int y = fromCell.Field.y + yDirection;
+
+                while (x != toCell.Field.x && y != toCell.Field.y)
+                {
+                    if (game.Board.FindCellByCoordinates(x, y).IsOccupied())
+                        return false;
+
+                    x += xDirection;
+                    y += yDirection;
+                }
+            }
+
+            return true;
+        }
+
+        public void LockGameState(int pieceId)
         {
         }
 

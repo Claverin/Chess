@@ -6,13 +6,10 @@
         {
             Image = "/img/" + color + "/Bishop.svg";
         }
-        new public bool Move(Cell fromCell, Cell toCell)
+
+        public bool CanMove(Cell fromCell, Cell toCell)
         {
-            if(false)
-            {
-                return false;
-            }
-            return true;
+            throw new NotImplementedException();
         }
     }
 }

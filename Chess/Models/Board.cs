@@ -73,9 +73,15 @@ namespace Chess.Models
                 cell.Piece = new Pawn(color);
             }
         }
+
         public Cell FindCellByPieceId(int pieceId)
         {
             return Cells.FirstOrDefault(cell => cell.Piece != null && cell.Piece.Id == pieceId);
+        }
+
+        public Cell FindCellByCoordinates(int x, int y)
+        {
+            return Cells.FirstOrDefault(cell => cell.Field.x == x && cell.Field.y == y);
         }
     }
 }

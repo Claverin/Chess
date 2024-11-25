@@ -6,9 +6,18 @@
         {
             Image = "/img/" + color + "/Rock.svg";
         }
-        public void Move(Cell fromCell, Cell toCell)
+        public bool CanMove(Cell fromCell, Cell toCell)
         {
-            throw new NotImplementedException();
+            bool isVerticalMove = fromCell.Field.x == toCell.Field.x;
+            bool isHorizontalMove = fromCell.Field.y == toCell.Field.y;
+
+            if (!isVerticalMove && !isHorizontalMove)
+                return false;
+
+            //if (IsPathClear(fromCell, toCell))
+                //return false;
+
+            return true;
         }
     }
 }

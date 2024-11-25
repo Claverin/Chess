@@ -6,7 +6,7 @@
         {
             Image = "/img/" + color + "/King.svg";
         }
-        new public void Move(Cell fromCell, Cell toCell)
+        public bool CanMove(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
         }
