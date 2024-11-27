@@ -7,19 +7,15 @@
         {
             Image = "/img/" + color + "/Pawn.svg";
         }
-        public bool Move(Cell fromCell, Cell toCell, int BoardSize)
-        {
-            if(fromCell.Field.x != toCell.Field.x)
-            {
-                return false;
-            }
-            if(StartingPlace.Field.y == BoardSize)
-            {
-            }
-            if (fromCell.Field.y-2 != toCell.Field.y) {
 
-            }
-            return true;
+        public override void AvaibleMoves(Coordinates fromCell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool CanMove(Cell fromCell, Cell toCell)
+        {
+            throw new NotImplementedException();
         }
     }
 }

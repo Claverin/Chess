@@ -6,7 +6,13 @@
         {
             Image = "/img/" + color + "/Rock.svg";
         }
-        public bool CanMove(Cell fromCell, Cell toCell)
+
+        public override void AvaibleMoves(Coordinates fromCell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool CanMove(Cell fromCell, Cell toCell)
         {
             bool isVerticalMove = fromCell.Field.x == toCell.Field.x;
             bool isHorizontalMove = fromCell.Field.y == toCell.Field.y;

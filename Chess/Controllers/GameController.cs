@@ -41,10 +41,9 @@ namespace Chess.Controllers
             {
                 var previousColor = cell.FieldColor;
                 cell.FieldColor = "#FFC300"; //yellow
-                //CheckLegalMoves(pieceId);
-                //WaitForUser();
-                //TransferPiece();
-                //RemovePiece(cell);
+                game.Board.ActivePieceId = pieceId;
+
+                CheckLegalMoves(cell.Piece);
 
                 HttpContext.Session.Set("Game", game);
 
@@ -56,6 +55,11 @@ namespace Chess.Controllers
             }
 
             return View("GameBoard", game);
+        }
+
+        public void CheckLegalMoves(Piece piece)
+        {
+            piece.AvaibleMoves(piece.CurrentPosition);
         }
 
         public bool IsPathClear(Cell fromCell, Cell toCell)
@@ -105,10 +109,6 @@ namespace Chess.Controllers
         }
 
         public void LockGameState(int pieceId)
-        {
-        }
-
-        public void CheckLegalMoves(int piece)
         {
         }
 

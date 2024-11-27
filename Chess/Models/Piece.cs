@@ -20,7 +20,8 @@ namespace Chess.Models
             Active = true;
         }
 
-        //public abstract bool CanMove(Cell fromCell, Cell toCell, Board board);
+        public abstract void AvaibleMoves(Coordinates fromCell);
+        public abstract bool CanMove(Cell fromCell, Cell toCell);
 
         public void Capture()
         {

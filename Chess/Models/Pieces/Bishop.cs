@@ -7,7 +7,12 @@
             Image = "/img/" + color + "/Bishop.svg";
         }
 
-        public bool CanMove(Cell fromCell, Cell toCell)
+        public override void AvaibleMoves(Coordinates fromCell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool CanMove(Cell fromCell, Cell toCell)
         {
             throw new NotImplementedException();
         }
