@@ -20,7 +20,7 @@ namespace Chess.Models
             Active = true;
         }
 
-        public abstract void AvaibleMoves(Coordinates fromCell);
+        public abstract List<Coordinates> AvaibleMoves(Coordinates fromCell);
         public abstract bool CanMove(Cell fromCell, Cell toCell);
 
         public void Capture()

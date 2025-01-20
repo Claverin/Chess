@@ -25,6 +25,7 @@ namespace Chess.Controllers
         {
             var game = new Game(numberOfPlayers);
             HttpContext.Session.Set("Game", game);
+            HttpContext.Session.Set("Game2", game);
             return View("GameBoard", game);
         }
 
@@ -43,11 +44,11 @@ namespace Chess.Controllers
                 cell.FieldColor = "#FFC300"; //yellow
                 game.Board.ActivePieceId = pieceId;
 
-                CheckLegalMoves(cell.Piece);
+                CheckLegalMoves(cell.Piece, game);
 
-                HttpContext.Session.Set("Game", game);
+                HttpContext.Session.Set("Game2", game);
 
-                var testGame = HttpContext.Session.Get<Game>("Game");
+                var testGame = HttpContext.Session.Get<Game>("Game2");
             }
             else
             {
@@ -57,9 +58,18 @@ namespace Chess.Controllers
             return View("GameBoard", game);
         }
 
-        public void CheckLegalMoves(Piece piece)
+        public void CheckLegalMoves(Piece piece,Game game)
         {
-            piece.AvaibleMoves(piece.CurrentPosition);
+            var unlockedFields = piece.AvaibleMoves(piece.CurrentPosition);
+
+            foreach(var field in unlockedFields)
+            {
+                Cell cell = game.Board.FindCellByCoordinates(field.x,field.y);
+                if(cell != null)
+                {
+                    cell.FieldColor = "#CC8899";
+                }
+            }
         }
 
         public bool IsPathClear(Cell fromCell, Cell toCell)
@@ -106,26 +116,6 @@ namespace Chess.Controllers
             }
 
             return true;
-        }
-
-        public void LockGameState(int pieceId)
-        {
-        }
-
-        public void WaitForUser()
-        {
-        }
-
-        public void TransferPiece()
-        {
-        }
-
-        public void Unlock()
-        {
-        }
-        public void RemovePiece(Cell cell)
-        {
-            cell.Piece = null;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

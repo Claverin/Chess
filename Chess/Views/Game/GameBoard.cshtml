@@ -9,6 +9,9 @@
             @foreach (var cell in @Model.Board.Cells)
             {
                 <div style="background-color:@cell.FieldColor !important; margin:0; padding:0; height:100px; max-height:100px; width:100px; position: relative;">
+                    
+                    <div style="color:black">x=@cell.Field.x y=@cell.Field.y</div>
+
                     @if (@cell.Piece != null)
                     {
                         @if(@cell.Piece.Color == @Model.ActivePlayer.Colour)

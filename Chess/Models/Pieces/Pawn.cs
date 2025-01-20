@@ -8,9 +8,14 @@
             Image = "/img/" + color + "/Pawn.svg";
         }
 
-        public override void AvaibleMoves(Coordinates fromCell)
+        public override List<Coordinates> AvaibleMoves(Coordinates fromCell)
         {
-            throw new NotImplementedException();
+            var movePatern = new List<Coordinates> { };
+
+            movePatern.Add(new Coordinates(fromCell.x, fromCell.y - 1));
+            movePatern.Add(new Coordinates(fromCell.x, fromCell.y - 2));
+
+            return movePatern;
         }
 
         public override bool CanMove(Cell fromCell, Cell toCell)

@@ -35,11 +35,11 @@ namespace Chess.Models
                 {
                     if ((i + j) % 2 == 0)
                     {
-                        Cells.Add(new Cell(i, j,Color.White));
+                        Cells.Add(new Cell(j, i, Color.White));
                     }
                     else
                     {
-                        Cells.Add(new Cell(i, j, Color.Black));
+                        Cells.Add(new Cell(j, i, Color.Black));
                     }
                 }
             }
@@ -53,8 +53,8 @@ namespace Chess.Models
 
         private void PutPiecesOnBoard(Color color)
         {
-            int x = color == Color.White ? 7 : 0;
-            List<Cell> rulerPieces = Cells.FindAll(cell => cell.Field.x == x);
+            int y = color == Color.White ? 7 : 0;
+            List<Cell> rulerPieces = Cells.FindAll(cell => cell.Field.y == y);
 
             var pieceOrder = new Piece[]
             {
@@ -68,8 +68,8 @@ namespace Chess.Models
                 pieceOrder[i].CurrentPosition = rulerPieces[i].Field;
             }
 
-            x = (x == 0) ? 1 : 6;
-            foreach (var cell in Cells.FindAll(cell => cell.Field.x == x))
+            y = (y == 0) ? 1 : 6;
+            foreach (var cell in Cells.FindAll(cell => cell.Field.y == y))
             {
                 var pawn = new Pawn(color);
                 cell.Piece = pawn;
