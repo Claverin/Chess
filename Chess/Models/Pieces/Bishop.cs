@@ -1,15 +1,24 @@
-﻿namespace Chess.Models.Pieces
+﻿using Chess.Models;
+
+public class Bishop : Piece
 {
-    public class Bishop : Piece
+    public Bishop(Color color)
     {
-        public Bishop(Color color) : base(color)
+        Colour = color;
+        Image = "/img/" + color + "/Bishop.svg";
+    }
+    public override List<Field> AvailableMoves(Field current)
+    {
+        var moves = new List<Field>();
+
+        for (int i = 1; i < 8; i++)
         {
-            Image = "/img/" + color + "/Bishop.svg";
+            moves.Add(new Field { x = current.x + i, y = current.y + i });
+            moves.Add(new Field { x = current.x - i, y = current.y + i });
+            moves.Add(new Field { x = current.x + i, y = current.y - i });
+            moves.Add(new Field { x = current.x - i, y = current.y - i });
         }
 
-        public bool CanMove(Cell fromCell, Cell toCell)
-        {
-            throw new NotImplementedException();
-        }
+        return moves;
     }
 }

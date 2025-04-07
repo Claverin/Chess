@@ -1,46 +1,32 @@
-﻿using Chess.Models.Pieces;
-using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Chess.Models
 {
     public class Board
     {
-        public int Id { get; set; }
-        public List<Cell> Cells { get; set; } = new List<Cell>();
-        public string? activeField { get; set; }
-        public int Size { get; set; }
+        public List<Cell> Cells { get; set; } = new();
+        public List<Piece> Pieces { get; set; } = new();
+
         public Board()
         {
-            Size = 8;
-            PieceIdManager.Reset();
-            Create();
+            InitializeBoard();
             PutPiecesOnBoard();
         }
 
-    
-        [JsonConstructorAttribute]
-        public Board(int id, List<Cell> cells, string? activeField, int size)
+        private void InitializeBoard()
         {
-            Id = id;
-            Cells = cells;
-            this.activeField = activeField;
-            Size = size;
-        }
-
-        private void Create()
-        {
-            for (int i = 0; i < Size; i++)
+            for (int y = 0; y < 8; y++)
             {
-                for (var j = 0; j < Size; j++)
+                for (int x = 0; x < 8; x++)
                 {
-                    if ((i + j) % 2 == 0)
+                    var field = new Field { x = x, y = y };
+                    var color = (x + y) % 2 == 0 ? "#EEEED2" : "#769656";
+                    Cells.Add(new Cell
                     {
-                        Cells.Add(new Cell(i, j,Color.White));
-                    }
-                    else
-                    {
-                        Cells.Add(new Cell(i, j, Color.Black));
-                    }
+                        Field = field,
+                        FieldColor = color
+                    });
                 }
             }
         }
@@ -53,35 +39,38 @@ namespace Chess.Models
 
         private void PutPiecesOnBoard(Color color)
         {
-            int x = color == Color.White ? 7 : 0;
-            List<Cell> rulerPieces = Cells.FindAll(cell => cell.Field.x == x);
+            int y = color == Color.White ? 7 : 0;
+            List<Cell> rulerPieces = Cells.FindAll(cell => cell.Field.y == y);
 
             var pieceOrder = new Piece[]
             {
-                new Rock(color), new Knight(color), new Bishop(color), new Queen(color),
-                new King(color), new Bishop(color), new Knight(color), new Rock(color)
+                new Rook(color), new Knight(color), new Bishop(color), new Queen(color),
+                new King(color), new Bishop(color), new Knight(color), new Rook(color)
             };
 
             for (int i = 0; i < pieceOrder.Length; i++)
             {
                 rulerPieces[i].Piece = pieceOrder[i];
+                pieceOrder[i].CurrentPosition = rulerPieces[i].Field;
             }
 
-            x = (x == 0) ? 1 : 6;
-            foreach (var cell in Cells.FindAll(cell => cell.Field.x == x))
+            y = (y == 0) ? 1 : 6;
+            foreach (var cell in Cells.FindAll(cell => cell.Field.y == y))
             {
-                cell.Piece = new Pawn(color);
+                var pawn = new Pawn(color);
+                cell.Piece = pawn;
+                pawn.CurrentPosition = cell.Field;
             }
         }
 
         public Cell FindCellByPieceId(int pieceId)
         {
-            return Cells.FirstOrDefault(cell => cell.Piece != null && cell.Piece.Id == pieceId);
+            return Cells.FirstOrDefault(c => c.Piece != null && c.Piece.Id == pieceId);
         }
 
         public Cell FindCellByCoordinates(int x, int y)
         {
-            return Cells.FirstOrDefault(cell => cell.Field.x == x && cell.Field.y == y);
+            return Cells.FirstOrDefault(c => c.Field.x == x && c.Field.y == y);
         }
     }
 }
