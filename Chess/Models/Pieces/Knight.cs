@@ -1,36 +1,27 @@
-﻿namespace Chess.Models.Pieces
+﻿using Chess.Models;
+
+public class Knight : Piece
 {
-    public class Knight : Piece
+    public Knight(Color color)
     {
-        public Knight(Color color) : base(color)
+        Colour = color;
+        Image = "/img/" + color + "/Knight.svg";
+    }
+
+    public override List<Field> AvailableMoves(Field current)
+    {
+        var moves = new List<Field>
         {
-            Image = "/img/" + color + "/Knight.svg";
-        }
+            new Field { x = current.x + 2, y = current.y + 1 },
+            new Field { x = current.x + 2, y = current.y - 1 },
+            new Field { x = current.x - 2, y = current.y + 1 },
+            new Field { x = current.x - 2, y = current.y - 1 },
+            new Field { x = current.x + 1, y = current.y + 2 },
+            new Field { x = current.x + 1, y = current.y - 2 },
+            new Field { x = current.x - 1, y = current.y + 2 },
+            new Field { x = current.x - 1, y = current.y - 2 }
+        };
 
-        public override List<Coordinates> AvaibleMoves(Coordinates fromCell)
-        {
-            var movePatern = new List<Coordinates>();
-
-            int[] dx = { 2, 2, -2, -2, 1, 1, -1, -1 };
-            int[] dy = { 1, -1, 1, -1, 2, -2, 2, -2 };
-
-            for (int i = 0; i < 8; i++)
-            {
-                int newX = fromCell.x + dx[i];
-                int newY = fromCell.y + dy[i];
-
-                if (newX >= 0 && newX <= 7 && newY >= 0 && newY <= 7)
-                {
-                    movePatern.Add(new Coordinates(newX, newY));
-                }
-            }
-            return movePatern;
-        }
-
-
-        public override bool CanMove(Cell fromCell, Cell toCell)
-        {
-            throw new NotImplementedException();
-        }
+        return moves;
     }
 }

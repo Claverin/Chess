@@ -1,36 +1,25 @@
-﻿namespace Chess.Models.Pieces
+﻿using Chess.Models;
+
+public class King : Piece
 {
-    public class King : Piece
+    public King(Color color)
     {
-        public King(Color color) : base(color)
+        Colour = color;
+        Image = "/img/" + color + "/King.svg";
+    }
+    public override List<Field> AvailableMoves(Field current)
+    {
+        var moves = new List<Field>();
+
+        for (int dx = -1; dx <= 1; dx++)
         {
-            Image = "/img/" + color + "/King.svg";
-        }
-
-        public override List<Coordinates> AvaibleMoves(Coordinates fromCell)
-        {
-            var movePatern = new List<Coordinates>();
-
-            int[] dx = { 1, 1, 1, 0, 0, -1, -1, -1 };
-            int[] dy = { 1, 0, -1, 1, -1, 1, 0, -1 };
-
-            for (int i = 0; i < 8; i++)
+            for (int dy = -1; dy <= 1; dy++)
             {
-                int newX = fromCell.x + dx[i];
-                int newY = fromCell.y + dy[i];
-
-                if (newX >= 0 && newX <= 7 && newY >= 0 && newY <= 7)
-                {
-                    movePatern.Add(new Coordinates(newX, newY));
-                }
+                if (dx != 0 || dy != 0)
+                    moves.Add(new Field { x = current.x + dx, y = current.y + dy });
             }
-            return movePatern;
         }
 
-
-        public override bool CanMove(Cell fromCell, Cell toCell)
-        {
-            throw new NotImplementedException();
-        }
+        return moves;
     }
 }

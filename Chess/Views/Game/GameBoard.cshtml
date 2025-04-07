@@ -5,24 +5,30 @@
 
 <div class="container">
     <center>
-        <div class="row" style="max-width:800px; max-height:800px; min-width:800px; min-height:800px;">
-            @foreach (var cell in @Model.Board.Cells)
+        <div class="row" style="max-width:800px; max-height:800px; min-width:800px; min-height:800px; display:flex; flex-wrap:wrap;">
+            @foreach (var cell in Model.Board.Cells)
             {
-                <div style="background-color:@cell.FieldColor !important; margin:0; padding:0; height:100px; max-height:100px; width:100px; position: relative;">
-                    
-                    <div style="color:black">x=@cell.Field.x y=@cell.Field.y</div>
+                var backgroundColor = cell.AvaibleMove ? "#A020F0" : cell.FieldColor;
 
-                    @if (@cell.Piece != null)
+                <div style="background-color:@backgroundColor !important; margin:0; padding:0; height:100px; width:100px; position:relative; display:flex; justify-content:center; align-items:center; flex-direction:column;">
+                    <!-- development id -->
+                    @if (Model.DebugMode)
                     {
-                        @if(@cell.Piece.Color == @Model.ActivePlayer.Colour)
+                        <div style="color:darkred; margin:0 auto; z-index:2;">x=@cell.Field.x y=@cell.Field.y</div>
+                    }
+
+                    <!-- Set pieces on board -->
+                    @if (cell.Piece != null)
+                    {
+                        if (cell.Piece.Colour == Model.ActivePlayer.Colour)
                         {
                             <a asp-controller="Game" asp-action="MovePiece" asp-route-pieceId="@cell.Piece.Id">
-                                <img src=@cell.Piece.Image>@cell.Piece.Id
+                                <img src="@cell.Piece.Image" style="max-height:80px; max-width:80px; z-index:1;" /> @cell.Piece.Id
                             </a>
                         }
                         else
                         {
-                            <img src=@cell.Piece.Image>
+                            <img src="@cell.Piece.Image" style="max-height:80px; max-width:80px; z-index:1;" /> @cell.Piece.Id
                         }
                     }
                 </div>

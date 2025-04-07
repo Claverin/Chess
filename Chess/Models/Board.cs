@@ -1,46 +1,32 @@
-﻿using Chess.Models.Pieces;
-using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Chess.Models
 {
     public class Board
     {
-        public int Id { get; set; }
-        public List<Cell> Cells { get; set; } = new List<Cell>();
-        public int ActivePieceId { get; set; }
-        public int Size { get; set; }
+        public List<Cell> Cells { get; set; } = new();
+        public List<Piece> Pieces { get; set; } = new();
+
         public Board()
         {
-            Size = 8;
-            PieceIdManager.Reset();
-            Create();
+            InitializeBoard();
             PutPiecesOnBoard();
         }
 
-    
-        [JsonConstructorAttribute]
-        public Board(int id, List<Cell> cells, int activePieceId, int size)
+        private void InitializeBoard()
         {
-            Id = id;
-            Cells = cells;
-            ActivePieceId = activePieceId;
-            Size = size;
-        }
-
-        private void Create()
-        {
-            for (int i = 0; i < Size; i++)
+            for (int y = 0; y < 8; y++)
             {
-                for (var j = 0; j < Size; j++)
+                for (int x = 0; x < 8; x++)
                 {
-                    if ((i + j) % 2 == 0)
+                    var field = new Field { x = x, y = y };
+                    var color = (x + y) % 2 == 0 ? "#EEEED2" : "#769656";
+                    Cells.Add(new Cell
                     {
-                        Cells.Add(new Cell(j, i, Color.White));
-                    }
-                    else
-                    {
-                        Cells.Add(new Cell(j, i, Color.Black));
-                    }
+                        Field = field,
+                        FieldColor = color
+                    });
                 }
             }
         }
@@ -58,8 +44,8 @@ namespace Chess.Models
 
             var pieceOrder = new Piece[]
             {
-                new Rock(color), new Knight(color), new Bishop(color), new Queen(color),
-                new King(color), new Bishop(color), new Knight(color), new Rock(color)
+                new Rook(color), new Knight(color), new Bishop(color), new Queen(color),
+                new King(color), new Bishop(color), new Knight(color), new Rook(color)
             };
 
             for (int i = 0; i < pieceOrder.Length; i++)
@@ -79,12 +65,12 @@ namespace Chess.Models
 
         public Cell FindCellByPieceId(int pieceId)
         {
-            return Cells.FirstOrDefault(cell => cell.Piece != null && cell.Piece.Id == pieceId);
+            return Cells.FirstOrDefault(c => c.Piece != null && c.Piece.Id == pieceId);
         }
 
         public Cell FindCellByCoordinates(int x, int y)
         {
-            return Cells.FirstOrDefault(cell => cell.Field.x == x && cell.Field.y == y);
+            return Cells.FirstOrDefault(c => c.Field.x == x && c.Field.y == y);
         }
     }
 }

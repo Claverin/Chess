@@ -1,26 +1,31 @@
-﻿namespace Chess.Models.Pieces
+﻿using Chess.Models;
+
+public class Pawn : Piece
 {
-    public class Pawn : Piece
+    public Pawn(Color color)
     {
-        public Cell StartingPlace { get; set; }
-        public Pawn(Color color) : base(color)
+        Colour = color;
+        Image = "/img/" + color + "/Pawn.svg";
+    }
+
+    public override List<Field> AvailableMoves(Field current)
+    {
+        var moves = new List<Field>();
+        int direction = (Colour == Color.White) ? -1 : 1;
+
+        // Ruch do przodu
+        moves.Add(new Field { x = current.x, y = current.y + direction });
+
+        // Początkowy podwójny ruch
+        if ((Colour == Color.White && current.y == 6) || (Colour == Color.Black && current.y == 1))
         {
-            Image = "/img/" + color + "/Pawn.svg";
+            moves.Add(new Field { x = current.x, y = current.y + 2 * direction });
         }
 
-        public override List<Coordinates> AvaibleMoves(Coordinates fromCell)
-        {
-            var movePatern = new List<Coordinates> { };
+        // Bicie (tylko do sprawdzenia później, czy można)
+        moves.Add(new Field { x = current.x - 1, y = current.y + direction });
+        moves.Add(new Field { x = current.x + 1, y = current.y + direction });
 
-            movePatern.Add(new Coordinates(fromCell.x, fromCell.y - 1));
-            movePatern.Add(new Coordinates(fromCell.x, fromCell.y - 2));
-
-            return movePatern;
-        }
-
-        public override bool CanMove(Cell fromCell, Cell toCell)
-        {
-            throw new NotImplementedException();
-        }
+        return moves;
     }
 }
