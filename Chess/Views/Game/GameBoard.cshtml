@@ -1,44 +1,61 @@
 ﻿@model Chess.Models.Game
+
 @{
     ViewData["Title"] = "Chess Application";
 }
 
-<div class="container">
-    <center>
-        <div class="row" style="max-width:800px; max-height:800px; min-width:800px; min-height:800px; display:flex; flex-wrap:wrap;">
-            @foreach (var cell in Model.Board.Cells)
-            {
-                var backgroundColor = cell.AvaibleMove ? "#A020F0" : cell.FieldColor;
+<head>
+    <link href="~/css/GameBoard.css" rel="stylesheet" />
+</head>
 
-                <div style="background-color:@backgroundColor !important; margin:0; padding:0; height:100px; width:100px; position:relative; display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                    <!-- development id -->
+<div class="container mt-4">
+    <div class="chess-board">
+        @foreach (var cell in Model.Board.Cells)
+        {
+            var bgColor = cell.AvaibleMove ? "#A020F0" : cell.FieldColor;
+            var piece = cell.Piece;
+            var isActive = piece?.Colour == Model.ActivePlayer.Colour;
+
+            <div class="cell"
+                 style="background-color:@bgColor;"
+                 data-x="@cell.Field.x" data-y="@cell.Field.y">
+
+                @* Debug — top left *@
+                @if (Model.DebugMode)
+                {
+                    <div class="debug-coords">x=@cell.Field.x y=@cell.Field.y</div>
+                }
+
+                @* Piece rendering *@
+                @if (piece != null)
+                {
+                    if (isActive)
+                    {
+                        <a asp-controller="Game"
+                           asp-action="MovePiece"
+                           asp-route-pieceId="@piece.Id"
+                           title="Piece ID: @piece.Id">
+                            <img class="piece-img" src="@piece.Image" draggable="false" />
+                        </a>
+                    }
+                    else
+                    {
+                        <img class="piece-img" src="@piece.Image" draggable="false" />
+                    }
+
                     @if (Model.DebugMode)
                     {
-                        <div style="color:darkred; margin:0 auto; z-index:2;">x=@cell.Field.x y=@cell.Field.y</div>
+                        <div class="debug-id">ID: @piece.Id</div>
                     }
+                }
+            </div>
+        }
+    </div>
 
-                    <!-- Set pieces on board -->
-                    @if (cell.Piece != null)
-                    {
-                        if (cell.Piece.Colour == Model.ActivePlayer.Colour)
-                        {
-                            <a asp-controller="Game" asp-action="MovePiece" asp-route-pieceId="@cell.Piece.Id">
-                                <img src="@cell.Piece.Image" style="max-height:80px; max-width:80px; z-index:1;" /> @cell.Piece.Id
-                            </a>
-                        }
-                        else
-                        {
-                            <img src="@cell.Piece.Image" style="max-height:80px; max-width:80px; z-index:1;" /> @cell.Piece.Id
-                        }
-                    }
-                </div>
-            }
-        </div>
-    </center>
-    <div style="padding-top:5%;">
-        Move: @Model.ActivePlayer.Colour <br /><br />
-        White Score: @Model.Players[0].Score<br />
-        Black Score: @Model.Players[1].Score<br />
-        Number of Player: @Model.NumberOfPlayers
+    <div class="text-center mt-4">
+        <strong>Move:</strong> @Model.ActivePlayer.Colour <br /><br />
+        <strong>White Score:</strong> @Model.Players[0].Score<br />
+        <strong>Black Score:</strong> @Model.Players[1].Score<br />
+        <strong>Number of Players:</strong> @Model.NumberOfPlayers
     </div>
 </div>

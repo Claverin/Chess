@@ -1,34 +1,40 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Chess.Data;
+using Chess.Models;
 using Chess.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
-       builder.Configuration.GetConnectionString("DefaultConnection")
-       ));
-builder.Services.AddScoped<IGameService, GameService>();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddDefaultTokenProviders().AddDefaultUI()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddSession(Options =>
+Env.Load();
+builder.Configuration.AddEnvironmentVariables();
+
+builder.Services.Configure<MongoDbSettings>(options =>
 {
-    Options.IdleTimeout = TimeSpan.FromMinutes(10);
-    Options.Cookie.HttpOnly = true;
-    Options.Cookie.IsEssential = true;
+    options.ConnectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING");
+    options.DatabaseName = Environment.GetEnvironmentVariable("MONGODB_DATABASE_NAME");
 });
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+    .AddMongoDbStores<ApplicationUser, ApplicationRole, string>(
+        Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING"),
+        Environment.GetEnvironmentVariable("MONGODB_DATABASE_NAME")
+    )
+    .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddSingleton<MongoDbService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -37,9 +43,9 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
 app.Run();
