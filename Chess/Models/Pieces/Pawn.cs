@@ -2,11 +2,7 @@
 
 public class Pawn : Piece
 {
-    public Pawn(Color color)
-    {
-        Colour = color;
-        Image = "/img/" + color + "/Pawn.svg";
-    }
+    public Pawn(Color color, Field position, int id) : base(color, position, id) { }
 
     public override List<Field> AvailableMoves(Field current)
     {

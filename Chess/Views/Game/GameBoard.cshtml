@@ -14,7 +14,7 @@
         {
             var bgColor = cell.AvaibleMove ? "#A020F0" : cell.FieldColor;
             var piece = cell.Piece;
-            var isActive = piece?.Colour == Model.ActivePlayer.Colour;
+            var isActive = piece?.Colour == Model.OnMove;
 
             <div class="cell"
                  style="background-color:@bgColor;"
@@ -53,7 +53,7 @@
     </div>
 
     <div class="text-center mt-4">
-        <strong>Move:</strong> @Model.ActivePlayer.Colour <br /><br />
+        <strong>Move:</strong> @Model.OnMove <br /><br />
         <strong>White Score:</strong> @Model.Players[0].Score<br />
         <strong>Black Score:</strong> @Model.Players[1].Score<br />
         <strong>Number of Players:</strong> @Model.NumberOfPlayers

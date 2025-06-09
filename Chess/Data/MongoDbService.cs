@@ -15,23 +15,27 @@ namespace Chess.Data
             var client = new MongoClient(mongoDbSettings.Value.ConnectionString);
             _database = client.GetDatabase(mongoDbSettings.Value.DatabaseName);
 
-            // Sprawdzenie połączenia
             try
             {
-                _database.RunCommand((Command<BsonDocument>)"{ping:1}");
+                IsServerAlive();
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException("Nie udało się połączyć z bazą MongoDB.", ex);
+                throw new InvalidOperationException("IsServerAlive unhandled exception", ex);
             }
 
             _gamesCollection = _database.GetCollection<Game>("Games");
         }
 
-        // Zwróć kolekcję gier
         public IMongoCollection<Game> GetGamesCollection()
         {
             return _gamesCollection;
+        }
+
+        public void IsServerAlive()
+        {
+            var command = new BsonDocument { { "ping", 1 } };
+            _database.RunCommand<BsonDocument>(command);
         }
     }
 }

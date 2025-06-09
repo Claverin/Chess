@@ -3,6 +3,7 @@ using Chess.Models;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.IO.Pipelines;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,21 +12,25 @@ namespace Chess.Services
     public class GameService : IGameService
     {
         private readonly MongoDbService _mongoDbService;
+        private readonly BoardService _boardService;
+        private readonly PieceService _pieceService;
 
-        public GameService(MongoDbService mongoDbService)
+        public GameService(MongoDbService mongoDbService, BoardService boardService, PieceService pieceService)
         {
             _mongoDbService = mongoDbService;
+            _boardService = boardService;
+            _pieceService = pieceService;
         }
 
         public Game InitializeGame(int numberOfPlayers)
         {
             var game = new Game();
-            SetupGameMode(game,numberOfPlayers);
-            PutPiecesOnBoard(game.Board);
+            _boardService.SetupGameMode(game, numberOfPlayers);
+            _pieceService.PutPiecesOnBoard(game.Board);
             return game;
         }
 
-        public async Task<Game?> MakeMoveAsync(string? userId, string moveNotation)
+        public async Task<Game> MakeMove(string? userId, string moveNotation)
         {
             var gamesCollection = _mongoDbService.GetGamesCollection();
             var queryId = string.IsNullOrEmpty(userId) ? "guest" : userId;
@@ -96,59 +101,7 @@ namespace Chess.Services
             return (x, y);
         }
 
-        private void SetupGameMode(Game game, int numberOfPlayers)
-        {
-            game.NumberOfPlayers = numberOfPlayers;
-            game.Board = new Board();
-
-            game.Players = new List<Player>();
-            var colors = Enum.GetValues(typeof(Color)).Cast<Color>().ToList();
-
-            for (int i = 0; i < numberOfPlayers; i++)
-            {
-                if (i >= colors.Count)
-                    throw new ArgumentException("Number of players exceeds available colors.");
-
-                var player = new Player
-                {
-                    Colour = colors[i]
-                };
-                game.Players.Add(player);
-            }
-
-            game.ActivePlayer = game.Players[0];
-            game.DebugMode = true;
-        }
-
-        private void PutPiecesOnBoard(Board board)
-        {
-            PlaceMajorPieces(board, Color.White);
-            PlaceMajorPieces(board, Color.Black);
-        }
-
-        private void PlaceMajorPieces(Board board, Color color)
-        {
-            int yBack = color == Color.White ? 7 : 0;
-            int yPawn = color == Color.White ? 6 : 1;
-
-            var pieceOrder = new Piece[]
-            {
-                new Rook(color), new Knight(color), new Bishop(color), new Queen(color),
-                new King(color), new Bishop(color), new Knight(color), new Rook(color)
-            };
-
-            for (int x = 0; x < 8; x++)
-            {
-                var backCell = board.FindCellByCoordinates(x, yBack);
-                backCell.Piece = pieceOrder[x];
-                pieceOrder[x].CurrentPosition = backCell.Field;
-
-                var pawn = new Pawn(color);
-                var pawnCell = board.FindCellByCoordinates(x, yPawn);
-                pawnCell.Piece = pawn;
-                pawn.CurrentPosition = pawnCell.Field;
-            }
-        }
+        
 
         public Game SelectPieceAndHighlightMoves(Game game, int pieceId)
         {
@@ -163,7 +116,6 @@ namespace Chess.Services
 
             return game;
         }
-
         private void HighlightAvailableMoves(Game game, Piece piece)
         {
             var legalMoves = piece.AvailableMoves(piece.CurrentPosition);
@@ -177,7 +129,6 @@ namespace Chess.Services
                 targetCell.AvaibleMove = true;
             }
         }
-
         public bool IsPathClear(Game game, Cell fromCell, Cell toCell)
         {
             if (fromCell.Field.x == toCell.Field.x)
@@ -225,7 +176,6 @@ namespace Chess.Services
                 ProcessMove(game, moveNotation);
             }
         }
-
         public bool IsMoveLegal(Piece piece, (int x, int y) target)
         {
             return piece.AvailableMoves(piece.CurrentPosition).Any(m => m.x == target.x && m.y == target.y);

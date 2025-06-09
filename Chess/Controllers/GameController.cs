@@ -31,17 +31,16 @@ namespace Chess.Controllers
             try
             {
                 var userId = User?.Identity?.IsAuthenticated == true ? _userManager.GetUserId(User) : null;
-
                 var game = _gameService.InitializeGame(numberOfPlayers);
-
                 var gamesCollection = _mongoDbService.GetGamesCollection();
+
                 await gamesCollection.InsertOneAsync(game);
 
                 return View("GameBoard", game);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Błąd w StartGame");
+                _logger.LogError(ex, "StartGame error");
                 return View("Error");
             }
         }
@@ -53,7 +52,7 @@ namespace Chess.Controllers
             {
                 var userId = User?.Identity?.IsAuthenticated == true ? _userManager.GetUserId(User) : null;
 
-                var game = await _gameService.MakeMoveAsync(userId, moveNotation);
+                var game = await _gameService.MakeMove(userId, moveNotation);
                 if (game == null)
                 {
                     _logger.LogWarning("Brak aktywnej gry dla użytkownika {UserId}", userId ?? "guest");

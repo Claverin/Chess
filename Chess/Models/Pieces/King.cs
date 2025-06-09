@@ -2,11 +2,7 @@
 
 public class King : Piece
 {
-    public King(Color color)
-    {
-        Colour = color;
-        Image = "/img/" + color + "/King.svg";
-    }
+    public King(Color color, Field position, int id) : base(color, position, id) { }
     public override List<Field> AvailableMoves(Field current)
     {
         var moves = new List<Field>();

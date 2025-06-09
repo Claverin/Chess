@@ -2,11 +2,7 @@
 
 public class Bishop : Piece
 {
-    public Bishop(Color color)
-    {
-        Colour = color;
-        Image = "/img/" + color + "/Bishop.svg";
-    }
+    public Bishop(Color color, Field position, int id) : base(color, position, id) { }
     public override List<Field> AvailableMoves(Field current)
     {
         var moves = new List<Field>();
