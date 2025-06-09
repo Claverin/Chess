@@ -24,6 +24,9 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<BoardService>();
+builder.Services.AddScoped<PieceService>();
+
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();

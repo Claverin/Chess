@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 public interface IGameService
 {
     Game InitializeGame(int numberOfPlayers);
-    Task<Game?> MakeMoveAsync(string? userId, string moveNotation);
+    Task<Game> MakeMove(string? userId, string moveNotation);
     void RecordMove(Game game, string moveNotation);
     void ReconstructBoardFromMoves(Game game);
     Game SelectPieceAndHighlightMoves(Game game, int pieceId);

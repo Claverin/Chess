@@ -2,11 +2,7 @@
 
 public class Rook : Piece
 {
-    public Rook(Color color)
-    {
-        Colour = color;
-        Image = "/img/" + color + "/Rook.svg";
-    }
+    public Rook(Color color, Field position, int id) : base(color, position, id) { }
 
     public override List<Field> AvailableMoves(Field current)
     {

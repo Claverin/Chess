@@ -2,11 +2,7 @@
 
 public class Queen : Piece
 {
-    public Queen(Color color)
-    {
-        Colour = color;
-        Image = "/img/" + color + "/Queen.svg";
-    }
+    public Queen(Color color, Field position, int id) : base(color, position, id) { }
 
     public override List<Field> AvailableMoves(Field current)
     {

@@ -2,11 +2,7 @@
 
 public class Knight : Piece
 {
-    public Knight(Color color)
-    {
-        Colour = color;
-        Image = "/img/" + color + "/Knight.svg";
-    }
+    public Knight(Color color, Field position, int id) : base(color, position, id   ) { }
 
     public override List<Field> AvailableMoves(Field current)
     {
