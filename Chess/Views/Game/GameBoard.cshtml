@@ -15,8 +15,9 @@
             var bgColor = cell.AvaibleMove ? "#A020F0" : cell.FieldColor;
             var piece = cell.Piece;
             var isActive = piece?.Colour == Model.OnMove;
+            var cellClasses = isActive ? "cell active-piece" : "cell";
 
-            <div class="cell"
+            <div class="@cellClasses"
                  style="background-color:@bgColor;"
                  data-x="@cell.Field.x" data-y="@cell.Field.y">
 
@@ -29,7 +30,7 @@
                 @* Piece rendering *@
                 @if (piece != null)
                 {
-                    if (isActive)
+                    @if (isActive)
                     {
                         <a asp-controller="Game"
                            asp-action="MovePiece"

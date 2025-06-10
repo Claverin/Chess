@@ -20,12 +20,19 @@
     align-items: center;
     transition: background-color 0.2s ease;
     font-size: 12px;
+    height: 100%; /* Zwiêksza wysokoœæ komórki */
+    width: 100%; /* Zwiêksza szerokoœæ komórki */
 }
 
-    .cell:hover {
-        filter: brightness(1.15);
-        cursor: pointer;
-    }
+.active-piece:hover {
+    filter: brightness(1.15);
+    cursor: pointer;
+}
+
+.active-piece:active {
+    filter: brightness(1);
+    cursor: default;
+}
 
 .piece-img {
     max-width: 85%;

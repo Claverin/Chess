@@ -45,8 +45,7 @@ namespace Chess.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> MovePiece(string moveNotation)
+        public async Task<IActionResult> MovePiece(int pieceId)
         {
             try
             {
@@ -55,7 +54,7 @@ namespace Chess.Controllers
                 var game = await _gameService.MakeMove(userId, moveNotation);
                 if (game == null)
                 {
-                    _logger.LogWarning("Brak aktywnej gry dla użytkownika {UserId}", userId ?? "guest");
+                    _logger.LogWarning("There is not active game for user- {UserId}", userId ?? "guest");
                     return RedirectToAction("StartGame");
                 }
 
