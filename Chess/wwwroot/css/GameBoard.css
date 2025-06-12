@@ -20,8 +20,6 @@
     align-items: center;
     transition: background-color 0.2s ease;
     font-size: 12px;
-    height: 100%; /* Zwiêksza wysokoœæ komórki */
-    width: 100%; /* Zwiêksza szerokoœæ komórki */
 }
 
 .active-piece:hover {

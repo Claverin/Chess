@@ -51,7 +51,8 @@ namespace Chess.Controllers
             {
                 var userId = User?.Identity?.IsAuthenticated == true ? _userManager.GetUserId(User) : null;
 
-                var game = await _gameService.MakeMove(userId, moveNotation);
+                var game = await _gameService.MarkPossibleMovesAsync(userId, pieceId);
+
                 if (game == null)
                 {
                     _logger.LogWarning("There is not active game for user- {UserId}", userId ?? "guest");
@@ -62,7 +63,7 @@ namespace Chess.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Błąd podczas wykonywania ruchu");
+                _logger.LogError(ex, "MovePiece action error");
                 return View("Error");
             }
         }
