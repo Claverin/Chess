@@ -1,37 +1,26 @@
-﻿using Chess.Models;
+﻿using Chess.Data;
+using Chess.Models;
+using MongoDB.Driver;
 
 namespace Chess.Services
 {
     public class BoardService
     {
-        public void SetupGameMode(Game game, int numberOfPlayers)
+        private readonly MongoDbService _mongoDbService;
+
+        public BoardService(MongoDbService mongoDbService)
         {
-            try
-            {
-                if (numberOfPlayers < 2 || numberOfPlayers > 6)
-                    throw new ArgumentException("Number of players must be between 2 and 6.");
+            _mongoDbService = mongoDbService;
+        }
 
-                game.NumberOfPlayers = numberOfPlayers;
-                game.Board = new Board();
-                game.Players = new List<Player>();
+        public async Task<Game> SearchForGameAsync(string userId)
+        {
+            var gamesCollection = _mongoDbService.GetGamesCollection();
+            var queryId = string.IsNullOrEmpty(userId) ? "guest" : userId;
 
-                var colors = Enum.GetValues(typeof(Color)).Cast<Color>().ToList();
-
-                for (int i = 0; i < numberOfPlayers; i++)
-                {
-                    var player = new Player
-                    {
-                        Colour = colors[i]
-                    };
-                    game.Players.Add(player);
-                }
-
-                game.DebugMode = true;
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("SetupGameMode Error", ex);
-            }
+            return await gamesCollection
+                .Find(g => g.Active && g.Players.Any(p => p.UserId.ToString() == queryId))
+                .FirstOrDefaultAsync();
         }
     }
 }

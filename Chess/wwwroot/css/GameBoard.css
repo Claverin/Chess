@@ -22,10 +22,15 @@
     font-size: 12px;
 }
 
-    .cell:hover {
-        filter: brightness(1.15);
-        cursor: pointer;
-    }
+.active-piece:hover {
+    filter: brightness(1.15);
+    cursor: pointer;
+}
+
+.active-piece:active {
+    filter: brightness(1);
+    cursor: default;
+}
 
 .piece-img {
     max-width: 85%;

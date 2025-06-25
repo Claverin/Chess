@@ -2,15 +2,16 @@
 
 namespace Chess.Services
 {
-    public class PieceService
+    public class PieceSetupService
     {
-        public void PutPiecesOnBoard(Board board)
+        public Board PutPiecesOnBoard(Board board)
         {
             try
             {
                 int _nextPieceId = 0;
                 PlaceMajorPieces(board, Color.White, _nextPieceId);
                 PlaceMajorPieces(board, Color.Black, _nextPieceId);
+                return board;
             }
             catch (Exception ex)
             {

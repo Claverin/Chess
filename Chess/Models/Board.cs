@@ -21,7 +21,7 @@ namespace Chess.Models
             {
                 for (int x = 0; x < 8; x++)
                 {
-                    var field = new Field { x = x, y = y };
+                    var field = new Field { X = x, Y = y };
                     var color = (x + y) % 2 == 0 ? "#EEEED2" : "#769656";
                     Cells.Add(new Cell
                     {
@@ -39,7 +39,7 @@ namespace Chess.Models
 
         public Cell FindCellByCoordinates(int x, int y)
         {
-            return Cells.FirstOrDefault(c => c.Field.x == x && c.Field.y == y);
+            return Cells.FirstOrDefault(c => c.Field.X == x && c.Field.Y == y);
         }
     }
 }
