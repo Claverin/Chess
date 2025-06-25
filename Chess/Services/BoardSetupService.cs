@@ -2,9 +2,9 @@
 
 namespace Chess.Services
 {
-    public class GameBoarSetupService
+    public class BoardSetupService
     {
-        public Game CreateNewGame(int numberOfPlayers)
+        public Game CreateNewBoardWithRules(int numberOfPlayers)
         {
             try
             {

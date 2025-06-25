@@ -12,19 +12,19 @@
     <div class="chess-board">
         @foreach (var cell in Model.Board.Cells)
         {
-            var bgColor = cell.AvaibleMove ? "#A020F0" : cell.FieldColor;
+            var bgColor = cell.IsHighlighted ? "#A020F0" : cell.FieldColor;
             var piece = cell.Piece;
-            var isActive = piece?.Colour == Model.OnMove;
+            var isActive = piece?.Color == Model.OnMove;
             var cellClasses = isActive ? "cell active-piece" : "cell";
 
             <div class="@cellClasses"
                  style="background-color:@bgColor;"
-                 data-x="@cell.Field.x" data-y="@cell.Field.y">
+                 data-x="@cell.Field.X" data-y="@cell.Field.Y">
 
                 @* Debug — top left *@
                 @if (Model.DebugMode)
                 {
-                    <div class="debug-coords">x=@cell.Field.x y=@cell.Field.y</div>
+                    <div class="debug-coords">x=@cell.Field.X y=@cell.Field.Y</div>
                 }
 
                 @* Piece rendering *@
