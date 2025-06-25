@@ -46,6 +46,7 @@ https://en.wikipedia.org/wiki/Chess
 
 ### Database
 + MS SQL Server 2019
++ MogoDb
 
 ### Design Pattern
 + MVC
