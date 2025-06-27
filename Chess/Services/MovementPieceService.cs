@@ -27,6 +27,7 @@ namespace Chess.Services
             {
                 cell.IsHighlighted = false;
             }
+
             foreach (var move in possibleMoves)
             {
                 var cell = game.Board.FindCellByCoordinates(move.X, move.Y);

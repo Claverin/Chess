@@ -4,7 +4,7 @@ namespace Chess.Models
 {
     public class Player
     {
-        public ObjectId UserId { get; set; } = ObjectId.GenerateNewId();
+        public ObjectId UserId { get; set; }
         public string Name { get; set; } = "Guest";
         public Color Colour { get; set; }
         public int Score { get; set; } = 0;

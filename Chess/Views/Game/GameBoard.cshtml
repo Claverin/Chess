@@ -14,26 +14,23 @@
         {
             var bgColor = cell.IsHighlighted ? "#A020F0" : cell.FieldColor;
             var piece = cell.Piece;
-            var isActive = piece?.Color == Model.OnMove;
+            var isActive = piece?.Color == Model.PlayerOnMove;
             var cellClasses = isActive ? "cell active-piece" : "cell";
 
             <div class="@cellClasses"
                  style="background-color:@bgColor;"
                  data-x="@cell.Field.X" data-y="@cell.Field.Y">
 
-                @* Debug — top left *@
                 @if (Model.DebugMode)
                 {
                     <div class="debug-coords">x=@cell.Field.X y=@cell.Field.Y</div>
                 }
-
-                @* Piece rendering *@
                 @if (piece != null)
                 {
                     @if (isActive)
                     {
                         <a asp-controller="Game"
-                           asp-action="MovePiece"
+                           asp-action="SelectPiece"
                            asp-route-pieceId="@piece.Id"
                            title="Piece ID: @piece.Id">
                             <img class="piece-img" src="@piece.Image" draggable="false" />
@@ -54,7 +51,7 @@
     </div>
 
     <div class="text-center mt-4">
-        <strong>Move:</strong> @Model.OnMove <br /><br />
+        <strong>Move:</strong> @Model.PlayerOnMove <br /><br />
         <strong>White Score:</strong> @Model.Players[0].Score<br />
         <strong>Black Score:</strong> @Model.Players[1].Score<br />
         <strong>Number of Players:</strong> @Model.NumberOfPlayers

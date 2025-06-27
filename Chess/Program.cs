@@ -4,6 +4,7 @@ using Chess.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using DotNetEnv;
+using Chess.Models.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IUserIdentifierService, UserIdentifierService>();
+
 builder.Services.AddScoped<GameSetupService>();
 builder.Services.AddScoped<BoardService>();
 builder.Services.AddScoped<BoardSetupService>();
@@ -32,6 +35,7 @@ builder.Services.AddScoped<MovementPieceService>();
 
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
 builder.Services.AddScoped<RoleManager<ApplicationRole>>();
+
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 
 builder.Services.AddSingleton<MongoDbService>();
