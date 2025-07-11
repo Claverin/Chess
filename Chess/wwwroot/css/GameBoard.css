@@ -22,6 +22,16 @@
     font-size: 12px;
 }
 
+.cell a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
 .active-piece:hover {
     filter: brightness(1.15);
     cursor: pointer;
@@ -31,6 +41,21 @@
     filter: brightness(1);
     cursor: default;
 }
+
+.highlighted {
+    filter: brightness(0.6);
+}
+
+.highlighted:hover {
+    filter: brightness(1.15);
+    cursor: pointer;
+}
+
+.highlighted:active {
+    filter: brightness(1);
+    cursor: default;
+}
+
 
 .piece-img {
     max-width: 85%;

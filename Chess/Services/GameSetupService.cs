@@ -4,18 +4,18 @@ namespace Chess.Services
 {
     public class GameSetupService
     {
-        private readonly GameBoarSetupService _gameBoarSetupService;
+        private readonly BoardSetupService _boardSetupService;
         private readonly PieceSetupService _setupGamePieceService;
-        public GameSetupService(GameBoarSetupService gameBoarSetupService, PieceSetupService setupGamePieceService)
+        public GameSetupService(BoardSetupService boardSetupService, PieceSetupService setupGamePieceService)
         {
-            _gameBoarSetupService = gameBoarSetupService;
+            _boardSetupService = boardSetupService;
             _setupGamePieceService = setupGamePieceService;
         }
         public Game SetupNewGame(int numberOfPlayers)
         {
             try
             {
-                var game = _gameBoarSetupService.CreateNewGame(numberOfPlayers);
+                var game = _boardSetupService.CreateNewBoardWithRules(numberOfPlayers);
                 game.Board = _setupGamePieceService.PutPiecesOnBoard(game.Board);
                 return game;
             }

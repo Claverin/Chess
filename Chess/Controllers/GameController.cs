@@ -1,7 +1,9 @@
 ﻿using Chess.Data;
 using Chess.Models;
+using Chess.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Diagnostics;
 
@@ -10,33 +12,34 @@ namespace Chess.Controllers
     public class GameController : Controller
     {
         private readonly ILogger<GameController> _logger;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IGameService _gameService;
         private readonly MongoDbService _mongoDbService;
+        private readonly IUserIdentifierService _userIdentifierService;
 
         public GameController(
             ILogger<GameController> logger,
-            UserManager<ApplicationUser> userManager,
             IGameService gameService,
-            MongoDbService mongoDbService)
+            MongoDbService mongoDbService,
+            IUserIdentifierService userIdentifierService)
         {
             _logger = logger;
-            _userManager = userManager;
             _gameService = gameService;
             _mongoDbService = mongoDbService;
+            _userIdentifierService = userIdentifierService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> StartGame(int numberOfPlayers)
         {
             try
             {
-                var userId = User?.Identity?.IsAuthenticated == true ? _userManager.GetUserId(User) : null;
+                var userId = _userIdentifierService.CreateOrGetUserObjectId();
                 var game = _gameService.InitializeGame(numberOfPlayers);
                 var gamesCollection = _mongoDbService.GetGamesCollection();
 
                 await gamesCollection.InsertOneAsync(game);
 
-                return View("GameBoard", game);
+                return RedirectToAction("LoadGame", new { id = game.Id });
             }
             catch (Exception ex)
             {
@@ -45,28 +48,54 @@ namespace Chess.Controllers
             }
         }
 
-        public async Task<IActionResult> MovePiece(int pieceId)
+        [HttpGet]
+        public async Task<IActionResult> SelectPiece(int pieceId)
         {
             try
             {
-                var userId = User?.Identity?.IsAuthenticated == true ? _userManager.GetUserId(User) : null;
-
-                var game = await _gameService.MarkPossibleMovesAsync(userId, pieceId);
+                var userId = _userIdentifierService.CreateOrGetUserObjectId();
+                var game = await _gameService.MarkPossibleMoves(userId, pieceId);
 
                 if (game == null)
-                {
-                    _logger.LogWarning("There is not active game for user- {UserId}", userId ?? "guest");
                     return RedirectToAction("StartGame");
-                }
 
-                return View("GameBoard", game);
+                return RedirectToAction("LoadGame", new { id = game.Id });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "MovePiece action error");
+                _logger.LogError(ex, "SelectPiece action error");
                 return View("Error");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> MovePieceTo(int x, int y)
+        {
+            var userId = _userIdentifierService.CreateOrGetUserObjectId();
+            var game = await _gameService.TryMovePieceAsync(userId, x, y);
+
+            if (game == null)
+                return RedirectToAction("StartGame");
+
+            return RedirectToAction("LoadGame", new { id = game.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LoadGame(string id)
+        {
+            if (!ObjectId.TryParse(id, out var objectId))
+                return RedirectToAction("StartGame");
+
+            var game = await _mongoDbService.GetGamesCollection()
+                .Find(g => g.Id == objectId)
+                .FirstOrDefaultAsync();
+
+            if (game == null)
+                return RedirectToAction("StartGame");
+
+            return View("GameBoard", game);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

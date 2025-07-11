@@ -12,30 +12,34 @@
     <div class="chess-board">
         @foreach (var cell in Model.Board.Cells)
         {
-            var bgColor = cell.AvaibleMove ? "#A020F0" : cell.FieldColor;
+            var isHighlighted = cell.IsHighlighted ? "highlighted" : "";
             var piece = cell.Piece;
-            var isActive = piece?.Colour == Model.OnMove;
+            var isActive = piece?.Color == Model.PlayerOnMove;
             var cellClasses = isActive ? "cell active-piece" : "cell";
 
-            <div class="@cellClasses"
-                 style="background-color:@bgColor;"
-                 data-x="@cell.Field.x" data-y="@cell.Field.y">
+            <div class="@cellClasses @isHighlighted"
+            style="background-color:@cell.FieldColor;"
+            data-x="@cell.Field.X" data-y="@cell.Field.Y">
 
-                @* Debug — top left *@
                 @if (Model.DebugMode)
                 {
-                    <div class="debug-coords">x=@cell.Field.x y=@cell.Field.y</div>
+                    <div class="debug-coords">x=@cell.Field.X y=@cell.Field.Y</div>
                 }
-
-                @* Piece rendering *@
+                @if (isHighlighted != "")
+                {
+                    <a asp-controller="Game"
+                       asp-action="MovePieceTo"
+                       asp-route-x="@cell.Field.X"
+                       asp-route-y="@cell.Field.Y">
+                    </a>
+                }
                 @if (piece != null)
                 {
                     @if (isActive)
                     {
                         <a asp-controller="Game"
-                           asp-action="MovePiece"
-                           asp-route-pieceId="@piece.Id"
-                           title="Piece ID: @piece.Id">
+                           asp-action="SelectPiece"
+                           asp-route-pieceId="@piece.Id">
                             <img class="piece-img" src="@piece.Image" draggable="false" />
                         </a>
                     }
@@ -54,7 +58,7 @@
     </div>
 
     <div class="text-center mt-4">
-        <strong>Move:</strong> @Model.OnMove <br /><br />
+        <strong>Move:</strong> @Model.PlayerOnMove <br /><br />
         <strong>White Score:</strong> @Model.Players[0].Score<br />
         <strong>Black Score:</strong> @Model.Players[1].Score<br />
         <strong>Number of Players:</strong> @Model.NumberOfPlayers

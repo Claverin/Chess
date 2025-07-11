@@ -1,5 +1,6 @@
 ﻿using Chess.Data;
 using Chess.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Chess.Services
@@ -13,13 +14,12 @@ namespace Chess.Services
             _mongoDbService = mongoDbService;
         }
 
-        public async Task<Game> SearchForGameAsync(string userId)
+        public async Task<Game> SearchForGameAsync(ObjectId userId)
         {
             var gamesCollection = _mongoDbService.GetGamesCollection();
-            var queryId = string.IsNullOrEmpty(userId) ? "guest" : userId;
 
             return await gamesCollection
-                .Find(g => g.Active && g.Players.Any(p => p.UserId.ToString() == queryId))
+                .Find(g => g.IsGameActive && g.Players.Any(p => p.UserId == userId))
                 .FirstOrDefaultAsync();
         }
     }

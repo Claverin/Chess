@@ -1,10 +1,18 @@
 ﻿using Chess.Models;
+using Chess.Models.Identity;
 
 namespace Chess.Services
 {
-    public class GameBoarSetupService
+    public class BoardSetupService
     {
-        public Game CreateNewGame(int numberOfPlayers)
+        private readonly IUserIdentifierService _userIdentifierService;
+
+        public BoardSetupService(IUserIdentifierService userIdentifierService)
+        {
+            _userIdentifierService = userIdentifierService;
+        }
+
+        public Game CreateNewBoardWithRules(int numberOfPlayers)
         {
             try
             {
@@ -23,6 +31,7 @@ namespace Chess.Services
                 {
                     var player = new Player
                     {
+                        UserId = _userIdentifierService.CreateOrGetUserObjectId(),
                         Colour = colors[i]
                     };
                     game.Players.Add(player);
