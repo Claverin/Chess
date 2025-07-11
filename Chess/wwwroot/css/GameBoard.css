@@ -42,6 +42,21 @@
     cursor: default;
 }
 
+.highlighted {
+    filter: brightness(0.6);
+}
+
+.highlighted:hover {
+    filter: brightness(1.15);
+    cursor: pointer;
+}
+
+.highlighted:active {
+    filter: brightness(1);
+    cursor: default;
+}
+
+
 .piece-img {
     max-width: 85%;
     max-height: 85%;

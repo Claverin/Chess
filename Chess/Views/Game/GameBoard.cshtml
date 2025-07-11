@@ -12,18 +12,26 @@
     <div class="chess-board">
         @foreach (var cell in Model.Board.Cells)
         {
-            var bgColor = cell.IsHighlighted ? "#A020F0" : cell.FieldColor;
+            var isHighlighted = cell.IsHighlighted ? "highlighted" : "";
             var piece = cell.Piece;
             var isActive = piece?.Color == Model.PlayerOnMove;
             var cellClasses = isActive ? "cell active-piece" : "cell";
 
-            <div class="@cellClasses"
-                 style="background-color:@bgColor;"
-                 data-x="@cell.Field.X" data-y="@cell.Field.Y">
+            <div class="@cellClasses @isHighlighted"
+            style="background-color:@cell.FieldColor;"
+            data-x="@cell.Field.X" data-y="@cell.Field.Y">
 
                 @if (Model.DebugMode)
                 {
                     <div class="debug-coords">x=@cell.Field.X y=@cell.Field.Y</div>
+                }
+                @if (isHighlighted != "")
+                {
+                    <a asp-controller="Game"
+                       asp-action="MovePieceTo"
+                       asp-route-x="@cell.Field.X"
+                       asp-route-y="@cell.Field.Y">
+                    </a>
                 }
                 @if (piece != null)
                 {
@@ -31,8 +39,7 @@
                     {
                         <a asp-controller="Game"
                            asp-action="SelectPiece"
-                           asp-route-pieceId="@piece.Id"
-                           title="Piece ID: @piece.Id">
+                           asp-route-pieceId="@piece.Id">
                             <img class="piece-img" src="@piece.Image" draggable="false" />
                         </a>
                     }

@@ -6,15 +6,17 @@ namespace Chess.Services
     {
         public Game SelectPieceAndHighlightMoves(Game game, int pieceId)
         {
-            Piece piece = game.Board.Pieces.FirstOrDefault(p => p.Id == pieceId);
+            Piece piece = game.Board.Pieces.FirstOrDefault(p => p.Id == pieceId && p.Color == game.PlayerOnMove);
             if (piece == null || piece.IsCaptured)
             {
                 game.ActivePieceId = null;
+                game.AvailableMoves.Clear();
                 HighlightCells(game, new List<Field>());
                 return game;
             }
 
             List<Field> possibleMoves = piece.GetPossibleMoves(piece.CurrentPosition, game.Board);
+            game.AvailableMoves = possibleMoves;
             HighlightCells(game, possibleMoves);
             game.ActivePieceId = pieceId;
 

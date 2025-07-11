@@ -54,7 +54,7 @@ namespace Chess.Controllers
             try
             {
                 var userId = _userIdentifierService.CreateOrGetUserObjectId();
-                var game = await _gameService.MarkPossibleMovesAsync(userId, pieceId);
+                var game = await _gameService.MarkPossibleMoves(userId, pieceId);
 
                 if (game == null)
                     return RedirectToAction("StartGame");
@@ -68,11 +68,11 @@ namespace Chess.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> MovePieceTo(Field field)
+        [HttpGet]
+        public async Task<IActionResult> MovePieceTo(int x, int y)
         {
             var userId = _userIdentifierService.CreateOrGetUserObjectId();
-            var game = await _gameService.TryMovePieceAsync(userId, field);
+            var game = await _gameService.TryMovePieceAsync(userId, x, y);
 
             if (game == null)
                 return RedirectToAction("StartGame");
