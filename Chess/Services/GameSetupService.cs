@@ -1,4 +1,4 @@
-﻿using Chess.Models;
+﻿using Chess.Domain.Entities;
 
 namespace Chess.Services
 {

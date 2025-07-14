@@ -1,6 +1,7 @@
-﻿using Chess.Models;
+﻿using Chess.Domain.Enums;
+using Chess.Domain.ValueObjects;
 
-namespace Chess.Models
+namespace Chess.Domain.Entities
 {
     public abstract class Piece
     {

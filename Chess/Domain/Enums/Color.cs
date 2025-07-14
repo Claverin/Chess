@@ -1,4 +1,4 @@
-﻿namespace Chess.Models
+﻿namespace Chess.Domain.Enums
 {
     public enum Color
     {

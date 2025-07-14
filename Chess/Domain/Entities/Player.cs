@@ -1,6 +1,7 @@
-﻿using MongoDB.Bson;
+﻿using Chess.Domain.Enums;
+using MongoDB.Bson;
 
-namespace Chess.Models
+namespace Chess.Domain.Entities
 {
     public class Player
     {

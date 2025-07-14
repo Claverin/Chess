@@ -1,6 +1,5 @@
-﻿using Chess.Models;
+﻿using Chess.Domain.Entities;
 using MongoDB.Bson;
-using System.Threading.Tasks;
 
 public interface IGameService
 {

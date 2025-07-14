@@ -1,5 +1,6 @@
-﻿using Chess.Data;
-using Chess.Models;
+﻿using Chess.Domain.Entities;
+using Chess.Infrastructure;
+using Chess.Intefaces.Infrastructure;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -7,9 +8,9 @@ namespace Chess.Services
 {
     public class BoardService
     {
-        private readonly MongoDbService _mongoDbService;
+        private readonly IMongoDbService _mongoDbService;
 
-        public BoardService(MongoDbService mongoDbService)
+        public BoardService(IMongoDbService mongoDbService)
         {
             _mongoDbService = mongoDbService;
         }

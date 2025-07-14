@@ -1,11 +1,12 @@
-﻿using Chess.Models;
+﻿using Chess.Intefaces.Infrastructure;
+using Chess.Domain.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Chess.Data
+namespace Chess.Infrastructure
 {
-    public class MongoDbService
+    public class MongoDbService : IMongoDbService
     {
         private readonly IMongoDatabase _database;
         private readonly IMongoCollection<Game> _gamesCollection;

@@ -1,9 +1,9 @@
 ﻿using MongoDB.Bson;
 
-namespace Chess.Models.Identity
+namespace Chess.Abstractions.Services
 {
     public interface IUserIdentifierService
     {
-        ObjectId CreateOrGetUserObjectId();
+        ObjectId GetUserObjectId();
     }
 }

@@ -1,4 +1,4 @@
-﻿using Chess.Models;
+﻿using Chess.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

@@ -1,4 +1,4 @@
-﻿namespace Chess.Models
+﻿namespace Chess.Domain.ValueObjects
 {
     public class Field
     {

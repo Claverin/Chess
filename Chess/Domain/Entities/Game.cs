@@ -1,8 +1,10 @@
-﻿using MongoDB.Bson;
+﻿using Chess.Domain.Enums;
+using Chess.Domain.ValueObjects;
+using MongoDB.Bson;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-namespace Chess.Models
+namespace Chess.Domain.Entities
 {
     public class Game
     {
