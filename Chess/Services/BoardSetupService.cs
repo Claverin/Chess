@@ -1,5 +1,6 @@
-﻿using Chess.Models;
-using Chess.Models.Identity;
+﻿using Chess.Abstractions.Services;
+using Chess.Domain.Entities;
+using Chess.Domain.Enums;
 
 namespace Chess.Services
 {
@@ -31,7 +32,7 @@ namespace Chess.Services
                 {
                     var player = new Player
                     {
-                        UserId = _userIdentifierService.CreateOrGetUserObjectId(),
+                        UserId = _userIdentifierService.GetUserObjectId(),
                         Colour = colors[i]
                     };
                     game.Players.Add(player);

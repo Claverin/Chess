@@ -1,4 +1,4 @@
-﻿namespace Chess.Models
+﻿namespace Chess.Infrastructure
 {
     public class MongoDbSettings
     {

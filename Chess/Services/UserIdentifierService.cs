@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
-using Chess.Models.Identity;
+using Chess.Abstractions.Services;
 
 public class UserIdentifierService : IUserIdentifierService
 {
@@ -16,20 +16,25 @@ public class UserIdentifierService : IUserIdentifierService
         _userManager = userManager;
     }
 
-    public ObjectId CreateOrGetUserObjectId()
+    public ObjectId GetUserObjectId()
     {
         var context = _httpContextAccessor.HttpContext;
-        var user = context?.User;
 
-        if (user?.Identity?.IsAuthenticated == true)
+        if (context?.User?.Identity?.IsAuthenticated == true)
         {
-            var userIdStr = _userManager.GetUserId(user);
+            var userIdStr = _userManager.GetUserId(context.User);
             if (ObjectId.TryParse(userIdStr, out var objectId))
                 return objectId;
-            throw new InvalidOperationException("Current user ID is corrupted (not a ObjectId)");
+
+            throw new InvalidOperationException("Current user ID is not a valid ObjectId.");
         }
 
-        const string cookieKey = "PlayerId";
+        return GetGuestId(context);
+    }
+
+    private ObjectId GetGuestId(HttpContext context)
+    {
+        const string cookieKey = "GuestId";
 
         if (context?.Request.Cookies.TryGetValue(cookieKey, out var cookieVal) == true &&
             ObjectId.TryParse(cookieVal, out var parsedCookieId))

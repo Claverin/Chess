@@ -1,19 +1,19 @@
-﻿using Chess.Data;
-using Chess.Models;
+﻿using Chess.Domain.Entities;
+using Chess.Infrastructure;
+using Chess.Intefaces.Infrastructure;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System.Linq;
 
 namespace Chess.Services
 {
     public class GameService : IGameService
     {
-        private readonly MongoDbService _mongoDbService;
+        private readonly IMongoDbService _mongoDbService;
         private readonly GameSetupService _gameSetupService;
         private readonly BoardService _boardService;
         private readonly MovementPieceService _movementPieceService;
 
-        public GameService(MongoDbService mongoDbService, GameSetupService gameSetupService, BoardService boardService, MovementPieceService movementPieceService)
+        public GameService(IMongoDbService mongoDbService, GameSetupService gameSetupService, BoardService boardService, MovementPieceService movementPieceService)
         {
             _mongoDbService = mongoDbService;
             _gameSetupService = gameSetupService;

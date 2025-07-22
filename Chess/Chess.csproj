@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\ViewModels\**" />
-    <Content Remove="Models\ViewModels\**" />
-    <EmbeddedResource Remove="Models\ViewModels\**" />
-    <None Remove="Models\ViewModels\**" />
+    <Compile Remove="Domain\ViewModels\**" />
+    <Content Remove="Domain\ViewModels\**" />
+    <EmbeddedResource Remove="Domain\ViewModels\**" />
+    <None Remove="Domain\ViewModels\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +21,12 @@
     <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="6.0.0" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="zRemovedContent\Data\" />
+    <Folder Include="Interfaces\Repositories\" />
+    <Folder Include="Tests\" />
   </ItemGroup>
 
 </Project>

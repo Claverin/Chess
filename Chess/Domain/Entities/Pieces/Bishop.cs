@@ -1,14 +1,16 @@
-﻿using Chess.Models;
+﻿using Chess.Domain.Entities;
+using Chess.Domain.Enums;
+using Chess.Domain.ValueObjects;
 
-public class Rook : Piece
+public class Bishop : Piece
 {
-    public Rook(Color color, Field position, int id) : base(color, position, id) { }
+    public Bishop(Color color, Field position, int id) : base(color, position, id) { }
 
     public override List<Field> GetPossibleMoves(Field current, Board board)
     {
         var moves = new List<Field>();
-        int[] dx = { 1, -1, 0, 0 };
-        int[] dy = { 0, 0, 1, -1 };
+        int[] dx = { 1, 1, -1, -1 };
+        int[] dy = { 1, -1, 1, -1 };
 
         for (int dir = 0; dir < 4; dir++)
         {

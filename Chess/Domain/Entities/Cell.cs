@@ -1,4 +1,6 @@
-﻿namespace Chess.Models
+﻿using Chess.Domain.ValueObjects;
+
+namespace Chess.Domain.Entities
 {
     public class Cell
     {

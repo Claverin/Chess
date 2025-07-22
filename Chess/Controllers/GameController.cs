@@ -1,7 +1,6 @@
-﻿using Chess.Data;
-using Chess.Models;
-using Chess.Models.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using Chess.Abstractions.Services;
+using Chess.Domain.Entities;
+using Chess.Intefaces.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,19 +12,22 @@ namespace Chess.Controllers
     {
         private readonly ILogger<GameController> _logger;
         private readonly IGameService _gameService;
-        private readonly MongoDbService _mongoDbService;
+        private readonly IMongoDbService _mongoDbService;
         private readonly IUserIdentifierService _userIdentifierService;
+        private readonly IGameTrackerService _gameTrackerService;
 
         public GameController(
             ILogger<GameController> logger,
             IGameService gameService,
-            MongoDbService mongoDbService,
-            IUserIdentifierService userIdentifierService)
+            IMongoDbService mongoDbService,
+            IUserIdentifierService userIdentifierService,
+            IGameTrackerService gameTrackerService)
         {
             _logger = logger;
             _gameService = gameService;
             _mongoDbService = mongoDbService;
             _userIdentifierService = userIdentifierService;
+            _gameTrackerService = gameTrackerService;
         }
 
         [HttpGet]
@@ -33,11 +35,11 @@ namespace Chess.Controllers
         {
             try
             {
-                var userId = _userIdentifierService.CreateOrGetUserObjectId();
+                var userId = _userIdentifierService.GetUserObjectId();
                 var game = _gameService.InitializeGame(numberOfPlayers);
-                var gamesCollection = _mongoDbService.GetGamesCollection();
+                await _mongoDbService.GetGamesCollection().InsertOneAsync(game);
 
-                await gamesCollection.InsertOneAsync(game);
+                _gameTrackerService.SetCurrentGameId(game.Id);
 
                 return RedirectToAction("LoadGame", new { id = game.Id });
             }
@@ -53,7 +55,7 @@ namespace Chess.Controllers
         {
             try
             {
-                var userId = _userIdentifierService.CreateOrGetUserObjectId();
+                var userId = _userIdentifierService.GetUserObjectId();
                 var game = await _gameService.MarkPossibleMoves(userId, pieceId);
 
                 if (game == null)
@@ -71,7 +73,7 @@ namespace Chess.Controllers
         [HttpGet]
         public async Task<IActionResult> MovePieceTo(int x, int y)
         {
-            var userId = _userIdentifierService.CreateOrGetUserObjectId();
+            var userId = _userIdentifierService.GetUserObjectId();
             var game = await _gameService.TryMovePieceAsync(userId, x, y);
 
             if (game == null)
