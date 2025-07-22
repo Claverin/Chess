@@ -36,6 +36,11 @@ namespace Chess.Controllers
             try
             {
                 var userId = _userIdentifierService.GetUserObjectId();
+
+                await _mongoDbService.GetGamesCollection().UpdateManyAsync(
+                    g => g.OwnerId == userId && g.IsGameActive,
+                    Builders<Game>.Update.Set(g => g.IsGameActive, false));
+
                 var game = _gameService.InitializeGame(numberOfPlayers);
                 await _mongoDbService.GetGamesCollection().InsertOneAsync(game);
 

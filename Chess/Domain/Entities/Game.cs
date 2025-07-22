@@ -9,6 +9,7 @@ namespace Chess.Domain.Entities
     public class Game
     {
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
+        public ObjectId OwnerId { get; set; }
         public Board Board { get; set; }
         public List<Player> Players { get; set; } = new();
         public Color PlayerOnMove { get; set; } = Color.White;

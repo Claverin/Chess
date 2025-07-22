@@ -17,10 +17,8 @@ namespace Chess.Services
 
         public async Task<Game> SearchForGameAsync(ObjectId userId)
         {
-            var gamesCollection = _mongoDbService.GetGamesCollection();
-
-            return await gamesCollection
-                .Find(g => g.IsGameActive && g.Players.Any(p => p.UserId == userId))
+            return await _mongoDbService.GetGamesCollection()
+                .Find(g => g.OwnerId == userId && g.IsGameActive)
                 .FirstOrDefaultAsync();
         }
     }
