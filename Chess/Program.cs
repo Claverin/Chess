@@ -40,8 +40,9 @@ builder.Services.AddScoped<SignInManager<ApplicationUser>>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
-builder.Services.AddControllersWithViews()
-    .AddRazorRuntimeCompilation();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+MongoDbMappings.RegisterClassMaps();
 
 var app = builder.Build();
 
