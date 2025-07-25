@@ -20,5 +20,8 @@ namespace Chess.Domain.Entities
         public List<Field> AvailableMoves { get; set; } = new();
         public bool IsGameActive { get; set; } = true;
         public bool DebugMode { get; set; } = false;
+        public bool IsCheck { get; set; } = false;
+        public bool IsCheckmate { get; set; } = false;
+        public bool IsStalemate { get; set; } = false;
     }
 }
