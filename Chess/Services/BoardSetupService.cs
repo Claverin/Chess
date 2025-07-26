@@ -17,14 +17,17 @@ namespace Chess.Services
         {
             try
             {
-                var game = new Game();
+                var game = new Game
+                {
+                    OwnerId = _userIdentifierService.GetUserObjectId(),
+                    NumberOfPlayers = numberOfPlayers,
+                    Board = new Board(),
+                    Players = new List<Player>(),
+                    DebugMode = true
+                };
 
                 if (numberOfPlayers < 2 || numberOfPlayers > 6)
                     throw new ArgumentException("Number of players must be between 2 and 6.");
-
-                game.NumberOfPlayers = numberOfPlayers;
-                game.Board = new Board();
-                game.Players = new List<Player>();
 
                 var colors = Enum.GetValues(typeof(Color)).Cast<Color>().ToList();
 
@@ -32,14 +35,11 @@ namespace Chess.Services
                 {
                     var player = new Player
                     {
-                        UserId = _userIdentifierService.GetUserObjectId(),
+                        UserId = game.OwnerId,
                         Colour = colors[i]
                     };
                     game.Players.Add(player);
                 }
-
-                game.DebugMode = true;
-
 
                 return game;
             }

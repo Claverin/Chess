@@ -18,7 +18,7 @@ public class GameTrackerService : IGameTrackerService
             HttpOnly = true,
             Secure = true,
             IsEssential = true,
-            Expires = DateTimeOffset.UtcNow.AddDays(7)
+            Expires = DateTimeOffset.UtcNow.AddDays(1)
         });
     }
 

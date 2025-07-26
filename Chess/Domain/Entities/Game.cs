@@ -9,6 +9,7 @@ namespace Chess.Domain.Entities
     public class Game
     {
         public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
+        public ObjectId OwnerId { get; set; }
         public Board Board { get; set; }
         public List<Player> Players { get; set; } = new();
         public Color PlayerOnMove { get; set; } = Color.White;
@@ -19,5 +20,8 @@ namespace Chess.Domain.Entities
         public List<Field> AvailableMoves { get; set; } = new();
         public bool IsGameActive { get; set; } = true;
         public bool DebugMode { get; set; } = false;
+        public bool IsCheck { get; set; } = false;
+        public bool IsCheckmate { get; set; } = false;
+        public bool IsStalemate { get; set; } = false;
     }
 }

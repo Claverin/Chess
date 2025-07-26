@@ -36,12 +36,17 @@ namespace Chess.Controllers
             try
             {
                 var userId = _userIdentifierService.GetUserObjectId();
+
+                await _mongoDbService.GetGamesCollection().UpdateManyAsync(
+                    g => g.OwnerId == userId && g.IsGameActive,
+                    Builders<Game>.Update.Set(g => g.IsGameActive, false));
+
                 var game = _gameService.InitializeGame(numberOfPlayers);
                 await _mongoDbService.GetGamesCollection().InsertOneAsync(game);
 
                 _gameTrackerService.SetCurrentGameId(game.Id);
 
-                return RedirectToAction("LoadGame", new { id = game.Id });
+                return RedirectToAction("LoadLastGame");
             }
             catch (Exception ex)
             {
@@ -61,7 +66,7 @@ namespace Chess.Controllers
                 if (game == null)
                     return RedirectToAction("StartGame");
 
-                return RedirectToAction("LoadGame", new { id = game.Id });
+                return RedirectToAction("LoadLastGame");
             }
             catch (Exception ex)
             {
@@ -79,17 +84,19 @@ namespace Chess.Controllers
             if (game == null)
                 return RedirectToAction("StartGame");
 
-            return RedirectToAction("LoadGame", new { id = game.Id });
+            return RedirectToAction("LoadLastGame");
         }
 
         [HttpGet]
-        public async Task<IActionResult> LoadGame(string id)
+        public async Task<IActionResult> LoadLastGame()
         {
-            if (!ObjectId.TryParse(id, out var objectId))
-                return RedirectToAction("StartGame");
+            var gameId = _gameTrackerService.GetCurrentGameId();
+            if (gameId == null) return RedirectToAction("StartGame");
+
+            var userId = _userIdentifierService.GetUserObjectId();
 
             var game = await _mongoDbService.GetGamesCollection()
-                .Find(g => g.Id == objectId)
+                .Find(g => g.Id == gameId && g.Players.Any(p => p.UserId == userId))
                 .FirstOrDefaultAsync();
 
             if (game == null)
@@ -97,7 +104,6 @@ namespace Chess.Controllers
 
             return View("GameBoard", game);
         }
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
