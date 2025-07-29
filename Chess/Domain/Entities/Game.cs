@@ -12,7 +12,7 @@ namespace Chess.Domain.Entities
         public ObjectId OwnerId { get; set; }
         public Board Board { get; set; }
         public List<Player> Players { get; set; } = new();
-        public Color PlayerOnMove { get; set; } = Color.White;
+        public Color CurrentPlayerColor { get; set; } = Color.White;
         public int NumberOfPlayers { get; set; }
         public List<string> MoveHistory { get; set; } = new();
         public Player? Winner { get; set; } = null;

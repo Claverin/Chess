@@ -40,7 +40,7 @@ namespace Chess.Services
             if (game == null || game.ActivePieceId == null || game.AvailableMoves == null)
                 return null;
 
-            var piece = game.Board.Pieces.FirstOrDefault(p => p.Id == game.ActivePieceId && p.Color == game.PlayerOnMove);
+            var piece = game.Board.Pieces.FirstOrDefault(p => p.Id == game.ActivePieceId && p.Color == game.CurrentPlayerColor);
             if (piece == null)
                 return game;
 
@@ -62,10 +62,10 @@ namespace Chess.Services
                     cell.IsHighlighted = false;
                 }
 
-                game.PlayerOnMove++;
-                if (game.NumberOfPlayers <= (int)game.PlayerOnMove)
+                game.CurrentPlayerColor++;
+                if (game.NumberOfPlayers <= (int)game.CurrentPlayerColor)
                 {
-                    game.PlayerOnMove = 0;
+                    game.CurrentPlayerColor = 0;
                 }
             }
 

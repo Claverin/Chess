@@ -15,7 +15,7 @@
         {
             var isHighlighted = cell.IsHighlighted ? "highlighted" : "";
             var piece = cell.Piece;
-            var isActive = piece?.Color == Model.PlayerOnMove;
+            var isActive = piece?.Color == Model.CurrentPlayerColor;
             var cellClasses = isActive ? "cell active-piece" : "cell";
 
             <div class="@cellClasses @isHighlighted"
@@ -59,7 +59,7 @@
     </div>
 
     <div class="text-center mt-4">
-        <strong>Move:</strong> @Model.PlayerOnMove <br /><br />
+        <strong>Move:</strong> @Model.CurrentPlayerColor<br /><br />
         <strong>White Score:</strong> @Model.Players[0].Score<br />
         <strong>Black Score:</strong> @Model.Players[1].Score<br />
         <strong>Number of Players:</strong> @Model.NumberOfPlayers

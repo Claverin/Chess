@@ -7,7 +7,7 @@ namespace Chess.Services
     {
         public Game SelectPieceAndHighlightMoves(Game game, int pieceId)
         {
-            Piece piece = game.Board.Pieces.FirstOrDefault(p => p.Id == pieceId && p.Color == game.PlayerOnMove);
+            Piece piece = game.Board.Pieces.FirstOrDefault(p => p.Id == pieceId && p.Color == game.CurrentPlayerColor);
             if (piece == null || piece.IsCaptured)
             {
                 game.ActivePieceId = null;
