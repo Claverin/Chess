@@ -33,6 +33,7 @@ builder.Services.AddScoped<BoardSetupService>();
 builder.Services.AddScoped<PieceSetupService>();
 builder.Services.AddScoped<MovementPieceService>();
 builder.Services.AddScoped<IGameTrackerService, GameTrackerService>();
+builder.Services.AddScoped<IGameRulesService, GameRulesService>();
 
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
 builder.Services.AddScoped<RoleManager<ApplicationRole>>();

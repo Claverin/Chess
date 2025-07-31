@@ -52,20 +52,26 @@ namespace Chess.Services
             var possibleMoves = piece.GetPossibleMoves(piece.CurrentPosition, game.Board);
             var legalMoves = new List<Field>();
 
+            var fromCell = game.Board.FindCellByCoordinates(piece.CurrentPosition.X, piece.CurrentPosition.Y);
+
             foreach (var move in possibleMoves)
             {
-                var clonedGame = game.DeepClone();
-                var clonedPiece = clonedGame.Board.Pieces.First(p => p.Id == piece.Id);
-
-                var fromCell = clonedGame.Board.FindCellByCoordinates(clonedPiece.CurrentPosition.X, clonedPiece.CurrentPosition.Y);
-                var toCell = clonedGame.Board.FindCellByCoordinates(move.X, move.Y);
+                var toCell = game.Board.FindCellByCoordinates(move.X, move.Y);
+                var originalPosition = piece.CurrentPosition;
+                var pieceInTarget = toCell.Piece;
 
                 fromCell.Piece = null;
-                toCell.Piece = clonedPiece;
-                clonedPiece.CurrentPosition = move;
+                toCell.Piece = piece;
+                piece.CurrentPosition = move;
 
-                if (!IsKingInCheck(clonedGame, piece.Color))
+                if (!IsKingInCheck(game))
+                {
                     legalMoves.Add(move);
+                }
+
+                piece.CurrentPosition = originalPosition;
+                fromCell.Piece = piece;
+                toCell.Piece = pieceInTarget;
             }
 
             return legalMoves;
