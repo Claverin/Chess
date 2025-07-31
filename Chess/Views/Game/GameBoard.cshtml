@@ -10,33 +10,47 @@
 </head>
 
 <div class="container mt-4">
-    <div class="chess-board">
+    @if (!Model.IsGameActive && Model.IsCheckmate)
+    {
+        <div class="alert alert-danger text-center">
+            Checkmate! Player @Model.Winner?.Colour wins!
+        </div>
+    }
+    else if (!Model.IsGameActive && Model.IsStalemate)
+    {
+        <div class="alert alert-warning text-center">
+            Stalemate! The game is a draw.
+        </div>
+    }
+    else if (Model.IsCheck)
+    {
+        <div class="alert alert-info text-center">Check!</div>
+    }
+    <div class="chess-board @(Model.IsGameActive ? "" : "game-ended")">
         @foreach (var cell in Model.Board.Cells)
         {
-            var isHighlighted = cell.IsHighlighted ? "highlighted" : "";
             var piece = cell.Piece;
-            var isActive = piece?.Color == Model.PlayerOnMove;
+            var isActive = Model.IsGameActive && piece?.Color == Model.CurrentPlayerColor;
             var cellClasses = isActive ? "cell active-piece" : "cell";
+            if (cell.IsHighlighted) cellClasses += " highlighted";
 
-            <div class="@cellClasses @isHighlighted"
-            style="background-color:@cell.FieldColor;"
-            data-x="@cell.Field.X" data-y="@cell.Field.Y">
-
+            <div class="@cellClasses"
+                 style="@(string.IsNullOrWhiteSpace(cell.FieldColor) ? null : $"background-color:{cell.FieldColor};")"
+                 data-x="@cell.Field.X" data-y="@cell.Field.Y">
                 @if (Model.DebugMode)
                 {
                     <div class="debug-coords">x=@cell.Field.X y=@cell.Field.Y</div>
                 }
-                @if (isHighlighted != "")
+                @if (Model.IsGameActive && cell.IsHighlighted)
                 {
                     <a asp-controller="Game"
                        asp-action="MovePieceTo"
                        asp-route-x="@cell.Field.X"
-                       asp-route-y="@cell.Field.Y">
-                    </a>
+                       asp-route-y="@cell.Field.Y"></a>
                 }
                 @if (piece != null)
                 {
-                    @if (isActive)
+                    if (isActive)
                     {
                         <a asp-controller="Game"
                            asp-action="SelectPiece"
@@ -48,7 +62,6 @@
                     {
                         <img class="piece-img" src="@piece.Image" draggable="false" />
                     }
-
                     @if (Model.DebugMode)
                     {
                         <div class="debug-id">ID: @piece.Id</div>
@@ -57,11 +70,14 @@
             </div>
         }
     </div>
-
     <div class="text-center mt-4">
-        <strong>Move:</strong> @Model.PlayerOnMove <br /><br />
-        <strong>White Score:</strong> @Model.Players[0].Score<br />
-        <strong>Black Score:</strong> @Model.Players[1].Score<br />
-        <strong>Number of Players:</strong> @Model.NumberOfPlayers
+        <div><strong>Move:</strong> @Model.CurrentPlayerColor</div>
+        <div><strong>White Score:</strong> @Model.Players[0].Score</div>
+        <div><strong>Black Score:</strong> @Model.Players[1].Score</div>
+        <div><strong>Number of Players:</strong> @Model.NumberOfPlayers</div>
+        @if (!Model.IsGameActive && Model.Winner != null)
+        {
+            <div><strong>Winner:</strong> @Model.Winner.Colour</div>
+        }
     </div>
 </div>

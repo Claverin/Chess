@@ -1,4 +1,6 @@
-﻿using Chess.Domain.Entities;
+﻿using Chess.Abstractions.Services;
+using Chess.Domain.Entities;
+using Chess.Domain.Enums;
 using Chess.Infrastructure;
 using Chess.Intefaces.Infrastructure;
 using MongoDB.Bson;
@@ -12,13 +14,19 @@ namespace Chess.Services
         private readonly GameSetupService _gameSetupService;
         private readonly BoardService _boardService;
         private readonly MovementPieceService _movementPieceService;
+        private readonly IGameRulesService _rulesService;
 
-        public GameService(IMongoDbService mongoDbService, GameSetupService gameSetupService, BoardService boardService, MovementPieceService movementPieceService)
+        public GameService(IMongoDbService mongoDbService,
+            GameSetupService gameSetupService,
+            BoardService boardService,
+            MovementPieceService movementPieceService,
+            IGameRulesService rulesService)
         {
             _mongoDbService = mongoDbService;
             _gameSetupService = gameSetupService;
             _boardService = boardService;
             _movementPieceService = movementPieceService;
+            _rulesService = rulesService;
         }
 
         public Game InitializeGame(int numberOfPlayers)
@@ -40,7 +48,7 @@ namespace Chess.Services
             if (game == null || game.ActivePieceId == null || game.AvailableMoves == null)
                 return null;
 
-            var piece = game.Board.Pieces.FirstOrDefault(p => p.Id == game.ActivePieceId && p.Color == game.PlayerOnMove);
+            var piece = game.Board.Pieces.FirstOrDefault(p => p.Id == game.ActivePieceId && p.Color == game.CurrentPlayerColor);
             if (piece == null)
                 return game;
 
@@ -62,10 +70,26 @@ namespace Chess.Services
                     cell.IsHighlighted = false;
                 }
 
-                game.PlayerOnMove++;
-                if (game.NumberOfPlayers <= (int)game.PlayerOnMove)
+                game.CurrentPlayerColor++;
+                if (game.NumberOfPlayers <= (int)game.CurrentPlayerColor)
                 {
-                    game.PlayerOnMove = 0;
+                    game.CurrentPlayerColor = 0;
+                }
+
+                game.IsCheck = _rulesService.IsKingInCheck(game);
+                game.IsCheckmate = _rulesService.IsCheckmate(game);
+                game.IsStalemate = _rulesService.IsStalemate(game);
+
+                if (game.IsCheckmate || game.IsStalemate)
+                {
+                    game.IsGameActive = false;
+
+                    if (game.IsCheckmate)
+                    {
+                        var lastPlayerIndex = ((int)game.CurrentPlayerColor - 1 + game.NumberOfPlayers) % game.NumberOfPlayers;
+                        var lastPlayerColor = (Color)lastPlayerIndex;
+                        game.Winner = game.Players.FirstOrDefault(p => p.Colour == lastPlayerColor);
+                    }
                 }
             }
 

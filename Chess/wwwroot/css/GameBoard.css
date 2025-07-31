@@ -87,6 +87,13 @@
     pointer-events: none;
 }
 
+.chess-board.game-ended {
+    pointer-events: none;
+    opacity: 0.6;
+    filter: grayscale(40%);
+    transition: opacity 0.3s ease;
+}
+
 @media screen and (max-width: 600px) {
     .chess-board {
         max-width: 95vw;
