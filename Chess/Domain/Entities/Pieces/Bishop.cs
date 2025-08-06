@@ -6,7 +6,7 @@ public class Bishop : Piece
 {
     public Bishop(Color color, Field position, int id) : base(color, position, id) { }
 
-    public override List<Field> GetPossibleMoves(Field current, Board board)
+    public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
     {
         var moves = new List<Field>();
         int[] dx = { 1, 1, -1, -1 };
@@ -14,8 +14,8 @@ public class Bishop : Piece
 
         for (int dir = 0; dir < 4; dir++)
         {
-            int x = current.X;
-            int y = current.Y;
+            int x = currentPosition.X;
+            int y = currentPosition.Y;
 
             while (true)
             {

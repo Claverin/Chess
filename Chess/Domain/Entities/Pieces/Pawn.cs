@@ -6,14 +6,14 @@ public class Pawn : Piece
 {
     public Pawn(Color color, Field position, int id) : base(color, position, id) { }
 
-    public override List<Field> GetPossibleMoves(Field current, Board board)
+    public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
     {
         var moves = new List<Field>();
         int direction = Color == Color.White ? -1 : 1;
         int startRow = Color == Color.White ? 6 : 1;
 
-        int x = current.X;
-        int y = current.Y;
+        int x = currentPosition.X;
+        int y = currentPosition.Y;
 
         var oneStep = board.FindCellByCoordinates(x, y + direction);
         if (oneStep != null && oneStep.Piece == null)

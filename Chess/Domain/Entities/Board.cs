@@ -20,7 +20,7 @@ namespace Chess.Domain.Entities
             {
                 for (int x = 0; x < 8; x++)
                 {
-                    var field = new Field { X = x, Y = y };
+                    var field = new Field (x,y);
                     var color = (x + y) % 2 == 0 ? "#EEEED2" : "#769656";
                     Cells.Add(new Cell
                     {
