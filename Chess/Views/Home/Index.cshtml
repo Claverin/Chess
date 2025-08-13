@@ -1,9 +1,48 @@
-﻿@using Chess.Domain.Entities
-@model Board
-@{
-    ViewData["Title"] = "Chess Application";
+﻿@{
+    ViewData["Title"] = "Chess — Home";
+    ViewBag.BodyClass = "page-home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Chess Application</h1>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
+
+<section class="home-hero text-center">
+    <div class="container">
+        <p class="home-eyebrow">Nowa wersja • Szybszy silnik</p>
+        <h1 class="display-4 fw-bold home-title">Nowoczesne <span class="home-gradient">Szachy</span> w C#</h1>
+        <p class="lead home-subtitle">Graj z AI lub ze znajomym. Szybkie, czytelne i responsywne UI.</p>
+        <div class="d-flex gap-2 justify-content-center flex-wrap">
+            <a class="btn btn-success btn-lg px-4" asp-controller="Game" asp-action="StartGame" asp-route-numberOfPlayers="1">Zagraj teraz</a>
+            <a class="btn btn-outline-light btn-lg px-4" asp-controller="Game" asp-action="StartGame" asp-route-numberOfPlayers="2">Nowa gra +</a>
+        </div>
+    </div>
+</section>
+
+<section class="home-features">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="home-card">
+                    <div class="home-badge">♞ Tryby gry</div>
+                    <h3>Gracz kontra AI / Gra lokalna</h3>
+                    <p>Regulowana trudność i szybkie rozpoczynanie gier.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="home-card">
+                    <div class="home-badge">⏱ Analiza</div>
+                    <h3>Historia i podpowiedzi</h3>
+                    <p>Lista ruchów, cofanie, podświetlanie możliwych posunięć.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="home-card">
+                    <div class="home-badge">🎨 UI</div>
+                    <h3>Motywy & dostępność</h3>
+                    <p>Kontrast, responsywność i skróty klawiszowe.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

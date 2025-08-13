@@ -3,11 +3,12 @@
 
 @{
     ViewData["Title"] = "Chess Application";
+    ViewBag.BodyClass = "page-game";
 }
 
-<head>
-    <link href="~/css/GameBoard.css" rel="stylesheet" />
-</head>
+@section Styles {
+    <link rel="stylesheet" href="~/css/gameBoard.css" asp-append-version="true" />
+}
 
 <div class="container mt-4">
     @if (!Model.IsGameActive && Model.IsCheckmate)
@@ -26,6 +27,7 @@
     {
         <div class="alert alert-info text-center">Check!</div>
     }
+
     <div class="chess-board @(Model.IsGameActive ? "" : "game-ended")">
         @foreach (var cell in Model.Board.Cells)
         {
@@ -70,7 +72,8 @@
             </div>
         }
     </div>
-    <div class="text-center mt-4">
+
+    <div class="text-center mt-4 text-light">
         <div><strong>Move:</strong> @Model.CurrentPlayerColor</div>
         <div><strong>White Score:</strong> @Model.Players[0].Score</div>
         <div><strong>Black Score:</strong> @Model.Players[1].Score</div>
