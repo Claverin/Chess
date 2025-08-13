@@ -53,9 +53,9 @@ https://en.wikipedia.org/wiki/Chess
 
 ## Application exemplary usage
 ### Main Page
-![MainPage](./Screenshots/x.png)
+![MainPage](./Screenshots/mainPage_ss1.png)
 ### Board
-![Board](./Screenshots/ChessSettleUp.jpg)
+![Board](./Screenshots/mainPage_ss2.jpg)
 ### Account Creation
 ![AccountCreation](./Screenshots/x.png)
 ### Account Settings
