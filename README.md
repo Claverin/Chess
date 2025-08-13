@@ -55,7 +55,7 @@ https://en.wikipedia.org/wiki/Chess
 ### Main Page
 ![MainPage](./Screenshots/mainPage_ss1.png)
 ### Board
-![Board](./Screenshots/mainPage_ss2.jpg)
+![Board](./Screenshots/mainPage_ss2.png)
 ### Account Creation
 ![AccountCreation](./Screenshots/x.png)
 ### Account Settings
