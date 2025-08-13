@@ -45,51 +45,52 @@ namespace Chess.Services
         public async Task<Game> TryMovePieceAsync(ObjectId userId, int x, int y)
         {
             var game = await _boardService.SearchForGameAsync(userId);
-            if (game == null || game.ActivePieceId == null || game.AvailableMoves == null)
+            if (game == null || game.ActivePieceId == null)
                 return null;
 
-            var piece = game.Board.Pieces.FirstOrDefault(p => p.Id == game.ActivePieceId && p.Color == game.CurrentPlayerColor);
+            var piece = game.Board.Pieces
+                .FirstOrDefault(p => p.Id == game.ActivePieceId && p.Color == game.CurrentPlayerColor);
+
             if (piece == null)
                 return game;
 
-            var selectedField = game.Board.FindCellByCoordinates(x,y);
+            var targetField = game.Board.FindCellByCoordinates(x, y);
+            var legalMoves = _rulesService.GetLegalMoves(game, piece);
+            if (!legalMoves.Any(f => f.X == x && f.Y == y))
+                return game;
 
-            if (game.AvailableMoves.Any(f => f.X == x && f.Y == y))
+            if (targetField.Piece != null)
             {
-                var previousCell = game.Board.FindCellByCoordinates(piece.CurrentPosition.X, piece.CurrentPosition.Y);
-                if (previousCell != null)
-                    previousCell.Piece = null;
+                targetField.Piece.IsCaptured = true;
+            }
 
-                piece.CurrentPosition = selectedField.Field;
-                selectedField.Piece = piece;
-                game.ActivePieceId = null;
-                game.AvailableMoves.Clear();
+            var fromCell = game.Board.FindCellByCoordinates(piece.CurrentPosition.X, piece.CurrentPosition.Y);
+            if (fromCell != null)
+                fromCell.Piece = null;
 
-                foreach (var cell in game.Board.Cells)
+            piece.CurrentPosition = targetField.Field;
+            targetField.Piece = piece;
+
+            game.ActivePieceId = null;
+            game.AvailableMoves.Clear();
+
+            foreach (var cell in game.Board.Cells)
+                cell.IsHighlighted = false;
+
+            var currentColor = game.CurrentPlayerColor;
+            game.IsCheck = _rulesService.IsKingInCheck(game, currentColor);
+            game.IsCheckmate = _rulesService.IsCheckmate(game, currentColor);
+            game.IsStalemate = _rulesService.IsStalemate(game, currentColor);
+
+            game.CurrentPlayerColor = (Color)(((int)game.CurrentPlayerColor + 1) % game.NumberOfPlayers);
+
+            if (game.IsCheckmate || game.IsStalemate)
+            {
+                game.IsGameActive = false;
+
+                if (game.IsCheckmate)
                 {
-                    cell.IsHighlighted = false;
-                }
-
-                game.CurrentPlayerColor++;
-                if (game.NumberOfPlayers <= (int)game.CurrentPlayerColor)
-                {
-                    game.CurrentPlayerColor = 0;
-                }
-
-                game.IsCheck = _rulesService.IsKingInCheck(game);
-                game.IsCheckmate = _rulesService.IsCheckmate(game);
-                game.IsStalemate = _rulesService.IsStalemate(game);
-
-                if (game.IsCheckmate || game.IsStalemate)
-                {
-                    game.IsGameActive = false;
-
-                    if (game.IsCheckmate)
-                    {
-                        var lastPlayerIndex = ((int)game.CurrentPlayerColor - 1 + game.NumberOfPlayers) % game.NumberOfPlayers;
-                        var lastPlayerColor = (Color)lastPlayerIndex;
-                        game.Winner = game.Players.FirstOrDefault(p => p.Colour == lastPlayerColor);
-                    }
+                    game.Winner = game.Players.FirstOrDefault(p => p.Colour != currentColor);
                 }
             }
 

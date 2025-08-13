@@ -2,22 +2,23 @@
 using Chess.Domain.Entities;
 using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
+using Chess.Extensions;
 
 namespace Chess.Services
 {
     public class GameRulesService : IGameRulesService
     {
-        public bool IsKingInCheck(Game game)
+        public bool IsKingInCheck(Game game, Color color)
         {
             var king = game.Board.Pieces
-                .FirstOrDefault(p => p is King && p.Color == game.CurrentPlayerColor && !p.IsCaptured);
+                .FirstOrDefault(p => p is King && p.Color == color && !p.IsCaptured);
 
             if (king == null)
                 return false;
 
             var kingPos = king.CurrentPosition;
 
-            foreach (var enemy in game.Board.Pieces.Where(p => p.Color != game.CurrentPlayerColor && !p.IsCaptured))
+            foreach (var enemy in game.Board.Pieces.Where(p => p.Color != color && !p.IsCaptured))
             {
                 var possibleMoves = enemy.GetPossibleMoves(enemy.CurrentPosition, game.Board);
                 if (possibleMoves.Any(f => f.X == kingPos.X && f.Y == kingPos.Y))
@@ -27,23 +28,23 @@ namespace Chess.Services
             return false;
         }
 
-        public bool IsCheckmate(Game game)
+        public bool IsCheckmate(Game game, Color color)
         {
-            if (!IsKingInCheck(game))
+            if (!IsKingInCheck(game, color))
                 return false;
 
             return !game.Board.Pieces
-                .Where(p => p.Color == game.CurrentPlayerColor && !p.IsCaptured)
+                .Where(p => p.Color == color && !p.IsCaptured)
                 .Any(p => GetLegalMoves(game, p).Count > 0);
         }
 
-        public bool IsStalemate(Game game)
+        public bool IsStalemate(Game game, Color color)
         {
-            if (IsKingInCheck(game))
+            if (IsKingInCheck(game, color))
                 return false;
 
             return !game.Board.Pieces
-                .Where(p => p.Color == game.CurrentPlayerColor && !p.IsCaptured)
+                .Where(p => p.Color == color && !p.IsCaptured)
                 .Any(p => GetLegalMoves(game, p).Count > 0);
         }
 
@@ -52,26 +53,20 @@ namespace Chess.Services
             var possibleMoves = piece.GetPossibleMoves(piece.CurrentPosition, game.Board);
             var legalMoves = new List<Field>();
 
-            var fromCell = game.Board.FindCellByCoordinates(piece.CurrentPosition.X, piece.CurrentPosition.Y);
-
             foreach (var move in possibleMoves)
             {
-                var toCell = game.Board.FindCellByCoordinates(move.X, move.Y);
-                var originalPosition = piece.CurrentPosition;
-                var pieceInTarget = toCell.Piece;
+                var clonedGame = GameCloner.DeepClone(game);
+                var clonedPiece = clonedGame.Board.Pieces.First(p => p.Id == piece.Id && p.Color == game.CurrentPlayerColor);
+
+                var fromCell = clonedGame.Board.FindCellByCoordinates(clonedPiece.CurrentPosition.X, clonedPiece.CurrentPosition.Y);
+                var toCell = clonedGame.Board.FindCellByCoordinates(move.X, move.Y);
 
                 fromCell.Piece = null;
-                toCell.Piece = piece;
-                piece.CurrentPosition = move;
+                toCell.Piece = clonedPiece;
+                clonedPiece.CurrentPosition = move;
 
-                if (!IsKingInCheck(game))
-                {
+                if (!IsKingInCheck(clonedGame, clonedPiece.Color))
                     legalMoves.Add(move);
-                }
-
-                piece.CurrentPosition = originalPosition;
-                fromCell.Piece = piece;
-                toCell.Piece = pieceInTarget;
             }
 
             return legalMoves;

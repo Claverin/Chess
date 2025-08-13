@@ -1,0 +1,79 @@
+﻿.page-home {
+    --accent: #8ef06b;
+    --accent2: #7cc7ff;
+    --text: #e8ecf3;
+    --muted: #a7b0c0;
+    --card: rgba(255,255,255,.06);
+    --card-border: rgba(255,255,255,.12);
+    color: var(--text);
+    background: radial-gradient(1200px 800px at 80% -10%, rgba(126, 213, 111, .12), transparent 60%), radial-gradient(1000px 700px at 20% 120%, rgba(124, 199, 255, .12), transparent 60%), #0b0d12;
+}
+
+    .page-home .home-hero {
+        padding: clamp(48px, 8vw, 96px) 0;
+    }
+
+    .page-home .home-eyebrow {
+        display: inline-flex;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(142,240,107,.12);
+        border: 1px solid rgba(142,240,107,.35);
+        color: #baf6a3;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .page-home .home-title {
+        margin-top: 12px;
+    }
+
+    .page-home .home-gradient {
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .page-home .home-subtitle {
+        color: var(--muted);
+        margin: 10px 0 0;
+    }
+
+    .page-home .home-features {
+        padding: clamp(40px, 7vw, 80px) 0;
+    }
+
+    .page-home .home-card {
+        height: 100%;
+        padding: 20px;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+        .page-home .home-card h3 {
+            margin-top: 8px;
+            margin-bottom: 6px;
+        }
+
+    .page-home .home-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        background: rgba(124,199,255,.12);
+        color: #cfe9ff;
+        border: 1px solid rgba(124,199,255,.32);
+    }
+
+@media (max-width: 576px) {
+    .page-home .home-title {
+        font-size: 2rem;
+    }
+}
