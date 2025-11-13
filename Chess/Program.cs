@@ -6,22 +6,28 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 
+var connectionString = builder.Configuration["MONGODB_CONNECTION_STRING"];
+var dbName = builder.Configuration["MONGODB_DATABASE_NAME"];
+
+if (string.IsNullOrWhiteSpace(connectionString) || string.IsNullOrWhiteSpace(dbName))
+    throw new InvalidOperationException("MONGODB_CONNECTION_STRING or MONGODB_DATABASE_NAME is null");
+
+builder.Services
+    .AddIdentity<ApplicationUser, ApplicationRole>()
+    .AddMongoDbStores<ApplicationUser, ApplicationRole, string>(connectionString, dbName)
+    .AddDefaultTokenProviders();
+
 builder.Services.Configure<MongoDbSettings>(options =>
 {
-    options.ConnectionString = Environment.GetEnvironmentVariable("MONGODB_CONNECTION_STRING");
-    options.DatabaseName = Environment.GetEnvironmentVariable("MONGODB_DATABASE_NAME");
+    options.ConnectionString = connectionString;
+    options.DatabaseName = dbName;
 });
-
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddMongoDbStores<ApplicationUser, ApplicationRole, string>(
-        builder.Configuration["MONGODB_CONNECTION_STRING"],
-        builder.Configuration["MONGODB_DATABASE_NAME"]
-    )
-    .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IMongoDbService, MongoDbService>();
 builder.Services.AddScoped<IGameService, GameService>();
@@ -51,9 +57,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
