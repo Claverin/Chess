@@ -107,5 +107,29 @@ namespace Chess.Services
             await _mongoDbService.GetGamesCollection().ReplaceOneAsync(g => g.Id == game.Id, game);
             return game;
         }
+
+        public void MarkPiecesWithLegalMoves(Game game)
+        {
+            foreach (var cell in game.Board.Cells)
+            {
+                if (cell.Piece != null)
+                {
+                    cell.Piece.HasAnyLegalMove = false;
+                }
+            }
+
+            foreach (var cell in game.Board.Cells)
+            {
+                var piece = cell.Piece;
+                if (piece == null)
+                    continue;
+
+                if (piece.IsCaptured || piece.Color != game.CurrentPlayerColor)
+                    continue;
+
+                var moves = _rulesService.GetLegalMoves(game, piece);
+                piece.HasAnyLegalMove = moves.Any();
+            }
+        }
     }
 }

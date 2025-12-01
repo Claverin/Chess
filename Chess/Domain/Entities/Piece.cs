@@ -1,5 +1,6 @@
 ﻿using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Chess.Domain.Entities
 {
@@ -10,6 +11,9 @@ namespace Chess.Domain.Entities
         public string Image { get; set; }
         public Field CurrentPosition { get; set; }
         public bool IsCaptured { get; set; } = false;
+
+        [BsonIgnore]
+        public bool HasAnyLegalMove { get; set; } = false;
 
 
         protected Piece(Color color, Field currentPosition, int id)
