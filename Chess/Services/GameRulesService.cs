@@ -61,6 +61,11 @@ namespace Chess.Services
                 var fromCell = clonedGame.Board.FindCellByCoordinates(clonedPiece.CurrentPosition.X, clonedPiece.CurrentPosition.Y);
                 var toCell = clonedGame.Board.FindCellByCoordinates(move.X, move.Y);
 
+                if(toCell.Piece  != null)
+                {
+                    toCell.Piece.IsCaptured = true;
+                }
+
                 fromCell.Piece = null;
                 toCell.Piece = clonedPiece;
                 clonedPiece.CurrentPosition = move;

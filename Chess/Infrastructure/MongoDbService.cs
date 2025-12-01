@@ -20,6 +20,10 @@ namespace Chess.Infrastructure
             {
                 IsServerAlive();
             }
+            catch (TimeoutException ex)
+            {
+                throw new InvalidOperationException("MongoDb Timeout Exception", ex);
+            }
             catch (Exception ex)
             {
                 throw new InvalidOperationException("IsServerAlive unhandled exception", ex);

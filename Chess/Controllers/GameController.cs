@@ -102,6 +102,7 @@ namespace Chess.Controllers
             if (game == null)
                 return RedirectToAction("StartGame");
 
+            _gameService.MarkPiecesWithLegalMoves(game);
             return View("GameBoard", game);
         }
 

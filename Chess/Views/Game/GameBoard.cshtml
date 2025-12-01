@@ -32,8 +32,10 @@
         @foreach (var cell in Model.Board.Cells)
         {
             var piece = cell.Piece;
-            var isActive = Model.IsGameActive && piece?.Color == Model.CurrentPlayerColor;
-            var cellClasses = isActive ? "cell active-piece" : "cell";
+            var isPlayersPiece = Model.IsGameActive && piece?.Color == Model.CurrentPlayerColor;
+            var canSelect = isPlayersPiece && (piece?.HasAnyLegalMove ?? false);
+
+            var cellClasses = canSelect ? "cell active-piece" : "cell";
             if (cell.IsHighlighted) cellClasses += " highlighted";
 
             <div class="@cellClasses"
@@ -52,21 +54,28 @@
                 }
                 @if (piece != null)
                 {
-                    if (isActive)
+                    @if (piece != null)
                     {
-                        <a asp-controller="Game"
-                           asp-action="SelectPiece"
-                           asp-route-pieceId="@piece.Id">
+                        if (canSelect)
+                        {
+                            <a asp-controller="Game"
+                               asp-action="SelectPiece"
+                               asp-route-pieceId="@piece.Id">
+                                <img class="piece-img" src="@piece.Image" draggable="false" />
+                            </a>
+                        }
+                        else
+                        {
                             <img class="piece-img" src="@piece.Image" draggable="false" />
-                        </a>
-                    }
-                    else
-                    {
-                        <img class="piece-img" src="@piece.Image" draggable="false" />
-                    }
-                    @if (Model.DebugMode)
-                    {
-                        <div class="debug-id">ID: @piece.Id</div>
+                        }
+
+                        @if (Model.DebugMode)
+                        {
+                            <div class="debug-id">
+                                ID: @piece.Id |
+                                OnMove: @(piece.HasAnyLegalMove ? "T" : "F")
+                            </div>
+                        }
                     }
                 }
             </div>

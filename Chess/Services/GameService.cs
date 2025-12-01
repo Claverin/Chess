@@ -37,6 +37,8 @@ namespace Chess.Services
         public async Task<Game> MarkPossibleMoves(ObjectId userId, int pieceId)
         {
             Game game = await _boardService.SearchForGameAsync(userId);
+            if (game == null || !game.IsGameActive) return null;
+
             game = _movementPieceService.SelectPieceAndHighlightMoves(game, pieceId);
             await _mongoDbService.GetGamesCollection().ReplaceOneAsync(g => g.Id == game.Id, game);
             return game;
@@ -61,7 +63,15 @@ namespace Chess.Services
 
             if (targetField.Piece != null)
             {
-                targetField.Piece.IsCaptured = true;
+                var pieceInList = game.Board.Pieces.FirstOrDefault(p =>
+                    p.Id == targetField.Piece.Id &&
+                    p.Color == targetField.Piece.Color);
+
+
+                if (pieceInList != null)
+                {
+                    pieceInList.IsCaptured = true;
+                }
             }
 
             var fromCell = game.Board.FindCellByCoordinates(piece.CurrentPosition.X, piece.CurrentPosition.Y);
@@ -96,6 +106,30 @@ namespace Chess.Services
 
             await _mongoDbService.GetGamesCollection().ReplaceOneAsync(g => g.Id == game.Id, game);
             return game;
+        }
+
+        public void MarkPiecesWithLegalMoves(Game game)
+        {
+            foreach (var cell in game.Board.Cells)
+            {
+                if (cell.Piece != null)
+                {
+                    cell.Piece.HasAnyLegalMove = false;
+                }
+            }
+
+            foreach (var cell in game.Board.Cells)
+            {
+                var piece = cell.Piece;
+                if (piece == null)
+                    continue;
+
+                if (piece.IsCaptured || piece.Color != game.CurrentPlayerColor)
+                    continue;
+
+                var moves = _rulesService.GetLegalMoves(game, piece);
+                piece.HasAnyLegalMove = moves.Any();
+            }
         }
     }
 }
