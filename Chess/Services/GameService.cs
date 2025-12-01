@@ -61,10 +61,15 @@ namespace Chess.Services
 
             if (targetField.Piece != null)
             {
-                var pieceInList = game.Board.Pieces.FirstOrDefault(p => p.Id == targetField.Piece.Id);
+                var pieceInList = game.Board.Pieces.FirstOrDefault(p =>
+                    p.Id == targetField.Piece.Id &&
+                    p.Color == targetField.Piece.Color);
+
 
                 if (pieceInList != null)
+                {
                     pieceInList.IsCaptured = true;
+                }
             }
 
             var fromCell = game.Board.FindCellByCoordinates(piece.CurrentPosition.X, piece.CurrentPosition.Y);

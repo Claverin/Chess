@@ -1,7 +1,5 @@
 ﻿using Chess.Domain.Entities;
-using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
-using MongoDB.Bson;
 
 namespace Chess.Extensions
 {
@@ -17,13 +15,13 @@ namespace Chess.Extensions
                 NumberOfPlayers = original.NumberOfPlayers,
                 MoveHistory = new List<string>(original.MoveHistory),
                 Winner = original.Winner == null ? null : new Player
-                {
-                    UserId = original.Winner.UserId,
-                    Name = original.Winner.Name,
-                    Colour = original.Winner.Colour,
-                    Score = original.Winner.Score,
-                    IsHuman = original.Winner.IsHuman
-                },
+                    {
+                        UserId = original.Winner.UserId,
+                        Name = original.Winner.Name,
+                        Colour = original.Winner.Colour,
+                        Score = original.Winner.Score,
+                        IsHuman = original.Winner.IsHuman
+                    },
                 ActivePieceId = original.ActivePieceId,
                 AvailableMoves = original.AvailableMoves.Select(f => new Field(f.X, f.Y)).ToList(),
                 IsGameActive = original.IsGameActive,
@@ -44,13 +42,15 @@ namespace Chess.Extensions
                 }).ToList();
 
             var clonedBoard = new Board();
-            clonedBoard.Cells = new List<Cell>();
-            var fieldDict = new Dictionary<string, Field>();
+            clonedBoard.Cells.Clear();
+            clonedBoard.Pieces.Clear();
+
+            var fieldDict = new Dictionary<(int x, int y), Field>();
 
             foreach (var cell in original.Board.Cells)
             {
                 var clonedField = new Field(cell.Field.X, cell.Field.Y);
-                fieldDict[$"{clonedField.X}_{clonedField.Y}"] = clonedField;
+                fieldDict[(clonedField.X,clonedField.Y)] = clonedField;
 
                 var clonedCell = new Cell
                 {
@@ -62,16 +62,26 @@ namespace Chess.Extensions
                 clonedBoard.Cells.Add(clonedCell);
             }
 
-            clonedBoard.Pieces = new List<Piece>();
             foreach (var piece in original.Board.Pieces)
             {
-                var newPosition = fieldDict[$"{piece.CurrentPosition.X}_{piece.CurrentPosition.Y}"];
+                Field? newPosition = null;
+
+                if (piece.CurrentPosition != null)
+                {
+                    newPosition = fieldDict[(piece.CurrentPosition.X, piece.CurrentPosition.Y)];
+                }
+
                 var clonedPiece = piece.Clone(newPosition);
                 clonedBoard.Pieces.Add(clonedPiece);
 
-                var matchingCell = clonedBoard.Cells
-                    .First(c => c.Field.X == newPosition.X && c.Field.Y == newPosition.Y);
-                matchingCell.Piece = clonedPiece;
+                if (!clonedPiece.IsCaptured && clonedPiece.CurrentPosition != null)
+                {
+                    var matchingCell = clonedBoard.Cells.First(c =>
+                        c.Field.X == clonedPiece.CurrentPosition.X &&
+                        c.Field.Y == clonedPiece.CurrentPosition.Y);
+
+                    matchingCell.Piece = clonedPiece;
+                }
             }
 
             clonedGame.Board = clonedBoard;
