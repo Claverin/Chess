@@ -37,6 +37,8 @@ namespace Chess.Services
         public async Task<Game> MarkPossibleMoves(ObjectId userId, int pieceId)
         {
             Game game = await _boardService.SearchForGameAsync(userId);
+            if (game == null || !game.IsGameActive) return null;
+
             game = _movementPieceService.SelectPieceAndHighlightMoves(game, pieceId);
             await _mongoDbService.GetGamesCollection().ReplaceOneAsync(g => g.Id == game.Id, game);
             return game;
