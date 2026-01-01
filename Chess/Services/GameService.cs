@@ -88,11 +88,12 @@ namespace Chess.Services
                 cell.IsHighlighted = false;
 
             var currentColor = game.CurrentPlayerColor;
-            game.IsCheck = _rulesService.IsKingInCheck(game, currentColor);
-            game.IsCheckmate = _rulesService.IsCheckmate(game, currentColor);
-            game.IsStalemate = _rulesService.IsStalemate(game, currentColor);
+            var nextColor = (Color)(((int)game.CurrentPlayerColor + 1) % game.NumberOfPlayers);
+            game.CurrentPlayerColor = nextColor;
 
-            game.CurrentPlayerColor = (Color)(((int)game.CurrentPlayerColor + 1) % game.NumberOfPlayers);
+            game.IsCheck = _rulesService.IsKingInCheck(game, nextColor);
+            game.IsCheckmate = _rulesService.IsCheckmate(game, nextColor);
+            game.IsStalemate = _rulesService.IsStalemate(game, nextColor);
 
             if (game.IsCheckmate || game.IsStalemate)
             {
@@ -100,7 +101,7 @@ namespace Chess.Services
 
                 if (game.IsCheckmate)
                 {
-                    game.Winner = game.Players.FirstOrDefault(p => p.Colour != currentColor);
+                    game.Winner = game.Players.FirstOrDefault(p => p.Colour == currentColor);
                 }
             }
 

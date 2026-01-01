@@ -11,8 +11,8 @@ namespace Chess.Services
             try
             {
                 int _nextPieceId = 0;
-                PlaceMajorPieces(board, Color.White, _nextPieceId);
-                PlaceMajorPieces(board, Color.Black, _nextPieceId);
+                PlaceMajorPieces(board, Color.White, ref _nextPieceId);
+                PlaceMajorPieces(board, Color.Black, ref _nextPieceId);
                 return board;
             }
             catch (Exception ex)
@@ -21,7 +21,7 @@ namespace Chess.Services
             }
         }
 
-        private void PlaceMajorPieces(Board board, Color color, int _nextPieceId)
+        private void PlaceMajorPieces(Board board, Color color, ref int _nextPieceId)
         {
             int figureLine = color == Color.White ? 7 : 0;
             int pawnLine = color == Color.White ? 6 : 1;
