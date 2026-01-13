@@ -41,41 +41,47 @@
             <div class="@cellClasses"
                  style="@(string.IsNullOrWhiteSpace(cell.FieldColor) ? null : $"background-color:{cell.FieldColor};")"
                  data-x="@cell.Field.X" data-y="@cell.Field.Y">
+
                 @if (Model.DebugMode)
                 {
                     <div class="debug-coords">x=@cell.Field.X y=@cell.Field.Y</div>
                 }
+
+                @* Ruch na podświetlone pole (POST) *@
                 @if (Model.IsGameActive && cell.IsHighlighted)
                 {
-                    <a asp-controller="Game"
-                       asp-action="MovePieceTo"
-                       asp-route-x="@cell.Field.X"
-                       asp-route-y="@cell.Field.Y"></a>
+                    <form asp-controller="Game" asp-action="MovePieceTo" method="post" class="move-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="x" value="@cell.Field.X" />
+                        <input type="hidden" name="y" value="@cell.Field.Y" />
+                        <button type="submit" class="move-btn" aria-label="Move here"></button>
+                    </form>
                 }
+
+                @* Figura *@
                 @if (piece != null)
                 {
-                    @if (piece != null)
+                    if (canSelect)
                     {
-                        if (canSelect)
-                        {
-                            <a asp-controller="Game"
-                               asp-action="SelectPiece"
-                               asp-route-pieceId="@piece.Id">
+                        <form asp-controller="Game" asp-action="SelectPiece" method="post" class="piece-form">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="pieceId" value="@piece.Id" />
+                            <button type="submit" class="piece-btn" aria-label="Select piece">
                                 <img class="piece-img" src="@piece.Image" draggable="false" />
-                            </a>
-                        }
-                        else
-                        {
-                            <img class="piece-img" src="@piece.Image" draggable="false" />
-                        }
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <img class="piece-img" src="@piece.Image" draggable="false" />
+                    }
 
-                        @if (Model.DebugMode)
-                        {
-                            <div class="debug-id">
-                                ID: @piece.Id |
-                                OnMove: @(piece.HasAnyLegalMove ? "T" : "F")
-                            </div>
-                        }
+                    @if (Model.DebugMode)
+                    {
+                        <div class="debug-id">
+                            ID: @piece.Id |
+                            OnMove: @(piece.HasAnyLegalMove ? "T" : "F")
+                        </div>
                     }
                 }
             </div>

@@ -14,37 +14,35 @@ namespace Chess.Controllers
         private readonly IGameService _gameService;
         private readonly IMongoDbService _mongoDbService;
         private readonly IUserIdentifierService _userIdentifierService;
-        private readonly IGameTrackerService _gameTrackerService;
 
         public GameController(
             ILogger<GameController> logger,
             IGameService gameService,
             IMongoDbService mongoDbService,
-            IUserIdentifierService userIdentifierService,
-            IGameTrackerService gameTrackerService)
+            IUserIdentifierService userIdentifierService)
         {
             _logger = logger;
             _gameService = gameService;
             _mongoDbService = mongoDbService;
             _userIdentifierService = userIdentifierService;
-            _gameTrackerService = gameTrackerService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> StartGame(int numberOfPlayers)
+        public async Task<IActionResult> StartGame(int numberOfPlayers = 2)
         {
             try
             {
                 var userId = _userIdentifierService.GetUserObjectId();
+                var existingGame = await _mongoDbService.GetGamesCollection()
+                    .Find(g => g.OwnerId == userId && g.IsGameActive)
+                    .FirstOrDefaultAsync();
 
-                await _mongoDbService.GetGamesCollection().UpdateManyAsync(
-                    g => g.OwnerId == userId && g.IsGameActive,
-                    Builders<Game>.Update.Set(g => g.IsGameActive, false));
+                if (existingGame != null)
+                    return RedirectToAction("LoadLastGame");
 
                 var game = _gameService.InitializeGame(numberOfPlayers);
-                await _mongoDbService.GetGamesCollection().InsertOneAsync(game);
 
-                _gameTrackerService.SetCurrentGameId(game.Id);
+                await _mongoDbService.GetGamesCollection().InsertOneAsync(game);
 
                 return RedirectToAction("LoadLastGame");
             }
@@ -55,7 +53,36 @@ namespace Chess.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NewGame(int numberOfPlayers = 2)
+        {
+            try
+            {
+                var userId = _userIdentifierService.GetUserObjectId();
+                var games = _mongoDbService.GetGamesCollection();
+
+                await games.UpdateOneAsync(
+                    g => g.OwnerId == userId && g.IsGameActive,
+                    Builders<Game>.Update.Set(g => g.IsGameActive, false)
+                );
+
+                var newGame = _gameService.InitializeGame(numberOfPlayers);
+
+                await games.InsertOneAsync(newGame);
+
+                return RedirectToAction("LoadLastGame");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "NewGame error");
+                return View("Error");
+            }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SelectPiece(int pieceId)
         {
             try
@@ -75,35 +102,52 @@ namespace Chess.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> MovePieceTo(int x, int y)
         {
-            var userId = _userIdentifierService.GetUserObjectId();
-            var game = await _gameService.TryMovePieceAsync(userId, x, y);
+            try
+            {
+                var userId = _userIdentifierService.GetUserObjectId();
+                var game = await _gameService.TryMovePieceAsync(userId, x, y);
 
-            if (game == null)
-                return RedirectToAction("StartGame");
+                if (game == null)
+                    return RedirectToAction("StartGame");
 
-            return RedirectToAction("LoadLastGame");
+                return RedirectToAction("LoadLastGame");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "MovePieceTo error");
+                return View("Error");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> LoadLastGame()
         {
-            var gameId = _gameTrackerService.GetCurrentGameId();
-            if (gameId == null) return RedirectToAction("StartGame");
+            try
+            {
+                var userId = _userIdentifierService.GetUserObjectId();
 
-            var userId = _userIdentifierService.GetUserObjectId();
+                if (userId == null)
+                    return RedirectToAction("StartGame");
 
-            var game = await _mongoDbService.GetGamesCollection()
-                .Find(g => g.Id == gameId && g.Players.Any(p => p.UserId == userId))
-                .FirstOrDefaultAsync();
+                var game = await _mongoDbService.GetGamesCollection()
+                    .Find(g => g.OwnerId == userId && g.IsGameActive)
+                    .FirstOrDefaultAsync();
 
-            if (game == null)
-                return RedirectToAction("StartGame");
+                if (game == null)
+                    return RedirectToAction("StartGame");
 
-            _gameService.MarkPiecesWithLegalMoves(game);
-            return View("GameBoard", game);
+                _gameService.MarkPiecesWithLegalMoves(game);
+                return View("GameBoard", game);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "LoadLastGame error");
+                return View("Error");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
