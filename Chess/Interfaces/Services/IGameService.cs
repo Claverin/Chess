@@ -1,10 +1,14 @@
 ﻿using Chess.Domain.Entities;
-using MongoDB.Bson;
 
-public interface IGameService
+namespace Chess.Abstractions.Services
 {
-    Game InitializeGame(int numberOfPlayers);
-    Task<Game> MarkPossibleMoves(ObjectId userId, int pieceId);
-    Task<Game> TryMovePieceAsync(ObjectId userId, int x, int y);
-    void MarkPiecesWithLegalMoves(Game game);
+    public interface IGameService
+    {
+        Task<Game?> GetCurrentGame();
+        Task<Game> InitializeGame(int numberOfPlayers);
+        Task<Game> CreateNewGame(int numberOfPlayers);
+        Task<Game?> SelectPiece(int pieceId);
+        Task<Game?> MovePiece(int x, int y);
+        void MarkPiecesWithLegalMoves(Game game);
+    }
 }

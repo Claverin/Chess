@@ -6,8 +6,6 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
 
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
@@ -38,7 +36,6 @@ builder.Services.AddScoped<BoardService>();
 builder.Services.AddScoped<BoardSetupService>();
 builder.Services.AddScoped<PieceSetupService>();
 builder.Services.AddScoped<MovementPieceService>();
-builder.Services.AddScoped<IGameTrackerService, GameTrackerService>();
 builder.Services.AddScoped<IGameRulesService, GameRulesService>();
 
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
