@@ -18,7 +18,7 @@ namespace Chess.Domain.Entities
         public Player? Winner { get; set; } = null;
         public int? ActivePieceId { get; set; } = null;
         public List<Field> AvailableMoves { get; set; } = new();
-        public bool IsGameActive { get; set; } = true;
+        public bool IsGameActive { get; set; } = false;
         public bool DebugMode { get; set; } = false;
         public bool IsCheck { get; set; } = false;
         public bool IsCheckmate { get; set; } = false;

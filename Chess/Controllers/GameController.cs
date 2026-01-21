@@ -1,9 +1,6 @@
 ﻿using Chess.Abstractions.Services;
 using Chess.Domain.Entities;
-using Chess.Intefaces.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
-using MongoDB.Driver;
 using System.Diagnostics;
 
 namespace Chess.Controllers
@@ -12,39 +9,40 @@ namespace Chess.Controllers
     {
         private readonly ILogger<GameController> _logger;
         private readonly IGameService _gameService;
-        private readonly IMongoDbService _mongoDbService;
-        private readonly IUserIdentifierService _userIdentifierService;
 
-        public GameController(
-            ILogger<GameController> logger,
-            IGameService gameService,
-            IMongoDbService mongoDbService,
-            IUserIdentifierService userIdentifierService)
+        public GameController(ILogger<GameController> logger, IGameService gameService)
         {
             _logger = logger;
             _gameService = gameService;
-            _mongoDbService = mongoDbService;
-            _userIdentifierService = userIdentifierService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> StartGame(int numberOfPlayers = 2)
+        public async Task<IActionResult> Board()
         {
             try
             {
-                var userId = _userIdentifierService.GetUserObjectId();
-                var existingGame = await _mongoDbService.GetGamesCollection()
-                    .Find(g => g.OwnerId == userId && g.IsGameActive)
-                    .FirstOrDefaultAsync();
+                var game = await _gameService.GetCurrentGame();
+                if (game == null)
+                    return View("NoActiveGame");
 
-                if (existingGame != null)
-                    return RedirectToAction("LoadLastGame");
+                _gameService.MarkPiecesWithLegalMoves(game);
+                return View("GameBoard", game);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Board error");
+                return View("Error");
+            }
+        }
 
-                var game = _gameService.InitializeGame(numberOfPlayers);
-
-                await _mongoDbService.GetGamesCollection().InsertOneAsync(game);
-
-                return RedirectToAction("LoadLastGame");
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InitializeGame(int numberOfPlayers = 2)
+        {
+            try
+            {
+                await _gameService.InitializeGame(numberOfPlayers);
+                return RedirectToAction(nameof(Board));
             }
             catch (Exception ex)
             {
@@ -55,23 +53,12 @@ namespace Chess.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> NewGame(int numberOfPlayers = 2)
+        public async Task<IActionResult> CreateNewGame(int numberOfPlayers = 2)
         {
             try
             {
-                var userId = _userIdentifierService.GetUserObjectId();
-                var games = _mongoDbService.GetGamesCollection();
-
-                await games.UpdateOneAsync(
-                    g => g.OwnerId == userId && g.IsGameActive,
-                    Builders<Game>.Update.Set(g => g.IsGameActive, false)
-                );
-
-                var newGame = _gameService.InitializeGame(numberOfPlayers);
-
-                await games.InsertOneAsync(newGame);
-
-                return RedirectToAction("LoadLastGame");
+                await _gameService.CreateNewGame(numberOfPlayers);
+                return RedirectToAction(nameof(Board));
             }
             catch (Exception ex)
             {
@@ -80,24 +67,18 @@ namespace Chess.Controllers
             }
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SelectPiece(int pieceId)
         {
             try
             {
-                var userId = _userIdentifierService.GetUserObjectId();
-                var game = await _gameService.MarkPossibleMoves(userId, pieceId);
-
-                if (game == null)
-                    return RedirectToAction("StartGame");
-
-                return RedirectToAction("LoadLastGame");
+                await _gameService.SelectPiece(pieceId);
+                return RedirectToAction(nameof(Board));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "SelectPiece action error");
+                _logger.LogError(ex, "SelectPiece error");
                 return View("Error");
             }
         }
@@ -108,13 +89,11 @@ namespace Chess.Controllers
         {
             try
             {
-                var userId = _userIdentifierService.GetUserObjectId();
-                var game = await _gameService.TryMovePieceAsync(userId, x, y);
+                var game = await _gameService.MovePiece(x, y);
+                _logger.LogInformation("After move: game null={IsNull}, active={Active}, check={Check}, mate={Mate}, stalemate={Stalemate}",
+                    game == null, game?.IsGameActive, game?.IsCheck, game?.IsCheckmate, game?.IsStalemate);
 
-                if (game == null)
-                    return RedirectToAction("StartGame");
-
-                return RedirectToAction("LoadLastGame");
+                return RedirectToAction(nameof(Board));
             }
             catch (Exception ex)
             {
@@ -123,37 +102,8 @@ namespace Chess.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> LoadLastGame()
-        {
-            try
-            {
-                var userId = _userIdentifierService.GetUserObjectId();
-
-                if (userId == null)
-                    return RedirectToAction("StartGame");
-
-                var game = await _mongoDbService.GetGamesCollection()
-                    .Find(g => g.OwnerId == userId && g.IsGameActive)
-                    .FirstOrDefaultAsync();
-
-                if (game == null)
-                    return RedirectToAction("StartGame");
-
-                _gameService.MarkPiecesWithLegalMoves(game);
-                return View("GameBoard", game);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "LoadLastGame error");
-                return View("Error");
-            }
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

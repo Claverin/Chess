@@ -6,20 +6,12 @@ namespace Chess.Services
 {
     public class BoardSetupService
     {
-        private readonly IUserIdentifierService _userIdentifierService;
-
-        public BoardSetupService(IUserIdentifierService userIdentifierService)
-        {
-            _userIdentifierService = userIdentifierService;
-        }
-
         public Game CreateNewBoardWithRules(int numberOfPlayers)
         {
             try
             {
                 var game = new Game
                 {
-                    OwnerId = _userIdentifierService.GetUserObjectId(),
                     NumberOfPlayers = numberOfPlayers,
                     Board = new Board(),
                     Players = new List<Player>(),

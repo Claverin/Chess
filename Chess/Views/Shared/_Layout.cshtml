@@ -37,7 +37,7 @@
 
                         <!-- NEW GAME (POST) -->
                         <li class="nav-item">
-                            <form asp-controller="Game" asp-action="NewGame" method="post" class="d-inline m-0 p-0">
+                            <form asp-controller="Game" asp-action="CreateNewGame" method="post" class="d-inline m-0 p-0">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="numberOfPlayers" value="2" />
                                 <button type="submit" class="nav-link text-light bg-transparent border-0">
@@ -48,7 +48,7 @@
 
                         <!-- CONTINUE (GET) -->
                         <li class="nav-item">
-                            <form asp-controller="Game" asp-action="LoadLastGame" method="get" class="d-inline m-0 p-0">
+                            <form asp-controller="Game" asp-action="InitializeGame" method="post" class="d-inline m-0 p-0">
                                 <button type="submit" class="nav-link text-light bg-transparent border-0">
                                     Continue
                                 </button>

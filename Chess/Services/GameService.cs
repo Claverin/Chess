@@ -1,51 +1,101 @@
 ﻿using Chess.Abstractions.Services;
 using Chess.Domain.Entities;
 using Chess.Domain.Enums;
-using Chess.Infrastructure;
 using Chess.Intefaces.Infrastructure;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
 
 namespace Chess.Services
 {
     public class GameService : IGameService
     {
         private readonly IMongoDbService _mongoDbService;
+        private readonly IUserIdentifierService _userIdentifierService;
+
         private readonly GameSetupService _gameSetupService;
         private readonly BoardService _boardService;
         private readonly MovementPieceService _movementPieceService;
         private readonly IGameRulesService _rulesService;
 
-        public GameService(IMongoDbService mongoDbService,
+        public GameService(
+            IMongoDbService mongoDbService,
+            IUserIdentifierService userIdentifierService,
             GameSetupService gameSetupService,
             BoardService boardService,
             MovementPieceService movementPieceService,
             IGameRulesService rulesService)
         {
             _mongoDbService = mongoDbService;
+            _userIdentifierService = userIdentifierService;
             _gameSetupService = gameSetupService;
             _boardService = boardService;
             _movementPieceService = movementPieceService;
             _rulesService = rulesService;
         }
 
-        public Game InitializeGame(int numberOfPlayers)
+        public async Task<Game?> GetCurrentGame()
         {
-            return _gameSetupService.SetupNewGame(numberOfPlayers);
+            var userId = RequireUserId();
+            var game = _mongoDbService.GetGamesCollection();
+
+            var active = await game.Find(g => g.OwnerId == userId && g.IsGameActive).FirstOrDefaultAsync();
+
+            if (active != null) return active;
+
+            var last = await game.Find(g => g.OwnerId == userId).SortByDescending(g => g.Id).FirstOrDefaultAsync();
+
+            return last;
         }
 
-        public async Task<Game> MarkPossibleMoves(ObjectId userId, int pieceId)
+        public async Task<Game> InitializeGame(int numberOfPlayers)
         {
-            Game game = await _boardService.SearchForGameAsync(userId);
-            if (game == null || !game.IsGameActive) return null;
+            var userId = RequireUserId();
+            var games = _mongoDbService.GetGamesCollection();
 
-            game = _movementPieceService.SelectPieceAndHighlightMoves(game, pieceId);
-            await _mongoDbService.GetGamesCollection().ReplaceOneAsync(g => g.Id == game.Id, game);
+            var existing = await games
+                .Find(g => g.OwnerId == userId && g.IsGameActive)
+                .FirstOrDefaultAsync();
+
+            if (existing != null)
+                return existing;
+
+            var game = BuildNewGame(userId, numberOfPlayers);
+            await games.InsertOneAsync(game);
             return game;
         }
 
-        public async Task<Game> TryMovePieceAsync(ObjectId userId, int x, int y)
+        public async Task<Game> CreateNewGame(int numberOfPlayers)
         {
+            var userId = RequireUserId();
+            var games = _mongoDbService.GetGamesCollection();
+
+            await games.UpdateManyAsync(
+                g => g.OwnerId == userId && g.IsGameActive,
+                Builders<Game>.Update.Set(g => g.IsGameActive, false)
+            );
+
+            var game = BuildNewGame(userId, numberOfPlayers);
+            await games.InsertOneAsync(game);
+            return game;
+        }
+
+        public async Task<Game?> SelectPiece(int pieceId)
+        {
+            var userId = RequireUserId();
+
+            var game = await _boardService.SearchForGameAsync(userId);
+            if (game == null || !game.IsGameActive) return null;
+
+            game = _movementPieceService.SelectPieceAndHighlightMoves(game, pieceId);
+            await SaveGame(game);
+            return game;
+        }
+
+        public async Task<Game?> MovePiece(int x, int y)
+        {
+            var userId = RequireUserId();
+
             var game = await _boardService.SearchForGameAsync(userId);
             if (game == null || game.ActivePieceId == null)
                 return null;
@@ -56,34 +106,31 @@ namespace Chess.Services
             if (piece == null)
                 return game;
 
-            var targetField = game.Board.FindCellByCoordinates(x, y);
+            var targetCell = game.Board.FindCellByCoordinates(x, y);
             var legalMoves = _rulesService.GetLegalMoves(game, piece);
+
             if (!legalMoves.Any(f => f.X == x && f.Y == y))
                 return game;
 
-            if (targetField.Piece != null)
+            if (targetCell.Piece != null)
             {
-                var pieceInList = game.Board.Pieces.FirstOrDefault(p =>
-                    p.Id == targetField.Piece.Id &&
-                    p.Color == targetField.Piece.Color);
+                var captured = game.Board.Pieces.FirstOrDefault(p =>
+                    p.Id == targetCell.Piece.Id &&
+                    p.Color == targetCell.Piece.Color);
 
-
-                if (pieceInList != null)
-                {
-                    pieceInList.IsCaptured = true;
-                }
+                if (captured != null)
+                    captured.IsCaptured = true;
             }
 
             var fromCell = game.Board.FindCellByCoordinates(piece.CurrentPosition.X, piece.CurrentPosition.Y);
             if (fromCell != null)
                 fromCell.Piece = null;
 
-            piece.CurrentPosition = targetField.Field;
-            targetField.Piece = piece;
+            piece.CurrentPosition = targetCell.Field;
+            targetCell.Piece = piece;
 
             game.ActivePieceId = null;
             game.AvailableMoves.Clear();
-
             foreach (var cell in game.Board.Cells)
                 cell.IsHighlighted = false;
 
@@ -98,39 +145,51 @@ namespace Chess.Services
             if (game.IsCheckmate || game.IsStalemate)
             {
                 game.IsGameActive = false;
-
                 if (game.IsCheckmate)
-                {
                     game.Winner = game.Players.FirstOrDefault(p => p.Colour == currentColor);
-                }
             }
 
-            await _mongoDbService.GetGamesCollection().ReplaceOneAsync(g => g.Id == game.Id, game);
+            await SaveGame(game);
             return game;
         }
 
         public void MarkPiecesWithLegalMoves(Game game)
         {
             foreach (var cell in game.Board.Cells)
-            {
                 if (cell.Piece != null)
-                {
                     cell.Piece.HasAnyLegalMove = false;
-                }
-            }
 
             foreach (var cell in game.Board.Cells)
             {
                 var piece = cell.Piece;
-                if (piece == null)
-                    continue;
-
-                if (piece.IsCaptured || piece.Color != game.CurrentPlayerColor)
-                    continue;
+                if (piece == null) continue;
+                if (piece.IsCaptured || piece.Color != game.CurrentPlayerColor) continue;
 
                 var moves = _rulesService.GetLegalMoves(game, piece);
                 piece.HasAnyLegalMove = moves.Any();
             }
+        }
+
+        private ObjectId RequireUserId()
+        {
+            var userId = _userIdentifierService.GetUserObjectId();
+            if (userId == null) throw new ArgumentException("UserId was null");
+            return userId;
+        }
+
+        private Game BuildNewGame(ObjectId userId, int numberOfPlayers)
+        {
+            var game = _gameSetupService.SetupNewGame(numberOfPlayers);
+            game.OwnerId = userId;
+            game.IsGameActive = true;
+
+            return game;
+        }
+
+        private Task SaveGame(Game game)
+        {
+            return _mongoDbService.GetGamesCollection()
+                .ReplaceOneAsync(g => g.Id == game.Id, game);
         }
     }
 }

@@ -6,8 +6,6 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
 
 Env.Load();
 builder.Configuration.AddEnvironmentVariables();
