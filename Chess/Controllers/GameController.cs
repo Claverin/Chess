@@ -1,5 +1,5 @@
-﻿using Chess.Abstractions.Services;
-using Chess.Domain.Entities;
+﻿using Chess.Domain.Entities;
+using Chess.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

@@ -1,8 +1,8 @@
-﻿using Chess.Abstractions.Services;
-using Chess.Domain.Entities;
+﻿using Chess.Domain.Entities;
 using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
 using Chess.Extensions;
+using Chess.Interfaces.Services;
 
 namespace Chess.Services
 {

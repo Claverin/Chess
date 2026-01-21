@@ -1,5 +1,5 @@
-﻿using Chess.Intefaces.Infrastructure;
-using Chess.Domain.Entities;
+﻿using Chess.Domain.Entities;
+using Chess.Interfaces.Infrastructure;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;

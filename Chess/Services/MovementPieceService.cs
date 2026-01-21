@@ -1,6 +1,6 @@
-﻿using Chess.Abstractions.Services;
-using Chess.Domain.Entities;
+﻿using Chess.Domain.Entities;
 using Chess.Domain.ValueObjects;
+using Chess.Interfaces.Services;
 
 namespace Chess.Services
 {
