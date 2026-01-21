@@ -1,6 +1,7 @@
-using Chess.Abstractions.Services;
 using Chess.Infrastructure;
-using Chess.Intefaces.Infrastructure;
+using Chess.Interfaces.Infrastructure;
+using Chess.Interfaces.Repository;
+using Chess.Interfaces.Services;
 using Chess.Services;
 using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
@@ -29,10 +30,10 @@ builder.Services.Configure<MongoDbSettings>(options =>
 
 builder.Services.AddSingleton<IMongoDbService, MongoDbService>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IUserIdentifierService, UserIdentifierService>();
 
 builder.Services.AddScoped<GameSetupService>();
-builder.Services.AddScoped<BoardService>();
 builder.Services.AddScoped<BoardSetupService>();
 builder.Services.AddScoped<PieceSetupService>();
 builder.Services.AddScoped<MovementPieceService>();

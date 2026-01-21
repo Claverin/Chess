@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 
-namespace Chess.Abstractions.Services
+namespace Chess.Interfaces.Services
 {
     public interface IUserIdentifierService
     {

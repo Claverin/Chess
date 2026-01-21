@@ -1,7 +1,7 @@
 ﻿using Chess.Domain.Entities;
 using MongoDB.Driver;
 
-namespace Chess.Intefaces.Infrastructure
+namespace Chess.Interfaces.Infrastructure
 {
     public interface IMongoDbService
     {

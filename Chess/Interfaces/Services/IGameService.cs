@@ -1,6 +1,6 @@
 ﻿using Chess.Domain.Entities;
 
-namespace Chess.Abstractions.Services
+namespace Chess.Interfaces.Services
 {
     public interface IGameService
     {

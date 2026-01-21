@@ -2,7 +2,7 @@
 using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
 
-namespace Chess.Abstractions.Services
+namespace Chess.Interfaces.Services
 {
     public interface IGameRulesService
     {

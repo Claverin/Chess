@@ -1,5 +1,4 @@
-﻿using Chess.Abstractions.Services;
-using Chess.Domain.Entities;
+﻿using Chess.Domain.Entities;
 using Chess.Domain.Enums;
 
 namespace Chess.Services
