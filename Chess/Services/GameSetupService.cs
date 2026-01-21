@@ -1,4 +1,5 @@
 ﻿using Chess.Domain.Entities;
+using MongoDB.Bson;
 
 namespace Chess.Services
 {
@@ -11,7 +12,17 @@ namespace Chess.Services
             _boardSetupService = boardSetupService;
             _setupGamePieceService = setupGamePieceService;
         }
-        public Game SetupNewGame(int numberOfPlayers)
+
+        public Game CreateNewGame(ObjectId userId, int numberOfPlayers)
+        {
+            var game = SetupNewGame(numberOfPlayers);
+            game.OwnerId = userId;
+            game.IsGameActive = true;
+
+            return game;
+        }
+
+        private Game SetupNewGame(int numberOfPlayers)
         {
             try
             {

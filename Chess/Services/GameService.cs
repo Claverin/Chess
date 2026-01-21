@@ -60,7 +60,7 @@ namespace Chess.Services
             if (existing != null)
                 return existing;
 
-            var game = BuildNewGame(userId, numberOfPlayers);
+            var game = _gameSetupService.CreateNewGame(userId, numberOfPlayers);
             await games.InsertOneAsync(game);
             return game;
         }
@@ -75,7 +75,7 @@ namespace Chess.Services
                 Builders<Game>.Update.Set(g => g.IsGameActive, false)
             );
 
-            var game = BuildNewGame(userId, numberOfPlayers);
+            var game = _gameSetupService.CreateNewGame(userId, numberOfPlayers);
             await games.InsertOneAsync(game);
             return game;
         }
@@ -175,15 +175,6 @@ namespace Chess.Services
             var userId = _userIdentifierService.GetUserObjectId();
             if (userId == null) throw new ArgumentException("UserId was null");
             return userId;
-        }
-
-        private Game BuildNewGame(ObjectId userId, int numberOfPlayers)
-        {
-            var game = _gameSetupService.SetupNewGame(numberOfPlayers);
-            game.OwnerId = userId;
-            game.IsGameActive = true;
-
-            return game;
         }
 
         private Task SaveGame(Game game)
