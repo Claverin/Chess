@@ -4,7 +4,10 @@ using Chess.Domain.ValueObjects;
 
 public class King : Piece
 {
+    public bool HasMoved { get; set; } = false;
+
     public King(Color color, Field position, int id) : base(color, position, id) { }
+
     public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
     {
         var moves = new List<Field>();
