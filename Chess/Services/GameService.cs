@@ -85,6 +85,10 @@ namespace Chess.Services
             if (piece == null)
                 return game;
 
+            int fromX = piece.CurrentPosition.X;
+            int fromY = piece.CurrentPosition.Y;
+            bool isCastling = piece is King && Math.Abs(x - fromX) == 2;
+
             var targetCell = game.Board.FindCellByCoordinates(x, y);
             var legalMoves = _rulesService.GetLegalMoves(game, piece);
 
@@ -101,12 +105,33 @@ namespace Chess.Services
                     captured.IsCaptured = true;
             }
 
-            var fromCell = game.Board.FindCellByCoordinates(piece.CurrentPosition.X, piece.CurrentPosition.Y);
+            var fromCell = game.Board.FindCellByCoordinates(fromX, fromY);
             if (fromCell != null)
                 fromCell.Piece = null;
 
             piece.CurrentPosition = targetCell.Field;
             targetCell.Piece = piece;
+
+            if (isCastling)
+            {
+                int rookFromX = (x == 6) ? 7 : 0;
+                int rookToX = (x == 6) ? 5 : 3;
+
+                var rookCell = game.Board.FindCellByCoordinates(rookFromX, fromY);
+                if (rookCell?.Piece is Rook rook)
+                {
+                    rookCell.Piece = null;
+
+                    var rookTarget = game.Board.FindCellByCoordinates(rookToX, fromY);
+                    rook.CurrentPosition = rookTarget.Field;
+                    rookTarget.Piece = rook;
+
+                    rook.HasMoved = true;
+                }
+            }
+
+            if (piece is King k) k.HasMoved = true;
+            if (piece is Rook r) r.HasMoved = true;
 
             game.ActivePieceId = null;
             game.AvailableMoves.Clear();

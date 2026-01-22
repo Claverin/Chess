@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Domain\ViewModels\**" />
+    <Compile Remove="zRemovedContent\**" />
     <Content Remove="Domain\ViewModels\**" />
+    <Content Remove="zRemovedContent\**" />
     <EmbeddedResource Remove="Domain\ViewModels\**" />
+    <EmbeddedResource Remove="zRemovedContent\**" />
     <None Remove="Domain\ViewModels\**" />
+    <None Remove="zRemovedContent\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="zRemovedContent\Data\" />
     <Folder Include="Interfaces\Repositories\" />
     <Folder Include="Tests\" />
   </ItemGroup>
