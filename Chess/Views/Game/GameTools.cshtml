@@ -87,13 +87,13 @@
     </div>
 
     <div class="text-center mt-4 text-light">
-        <div><strong>Move:</strong> @Model.CurrentPlayerColor</div>
-        <div><strong>White Score:</strong> @Model.Players[0].Score</div>
-        <div><strong>Black Score:</strong> @Model.Players[1].Score</div>
-        <div><strong>Number of Players:</strong> @Model.NumberOfPlayers</div>
-        @if (!Model.IsGameActive && Model.Winner != null)
-        {
-            <div><strong>Winner:</strong> @Model.Winner.Colour</div>
-        }
+        <div class="FEN">
+            <label class="name">FEN</label>
+            <input class="" spellcheck="false" />
+        </div>
+        <div class="PGN">
+            <label class="name">PGN</label>
+            <textarea class="" spellcheck="false"></textarea>
+        </div>
     </div>
 </div>
