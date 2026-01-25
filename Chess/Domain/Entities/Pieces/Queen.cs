@@ -2,14 +2,17 @@
 using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
 
-public class Queen : Piece
+namespace Chess.Domain.Entities.Pieces
 {
-    public Queen(Color color, Field position, int id) : base(color, position, id) { }
-
-    public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
+    public class Queen : Piece
     {
-        var rookMoves = new Rook(Color, currentPosition, Id).GetPossibleMoves(currentPosition, board);
-        var bishopMoves = new Bishop(Color, currentPosition, Id).GetPossibleMoves(currentPosition, board);
-        return rookMoves.Concat(bishopMoves).ToList();
+        public Queen(Color color, Field position, int id) : base(color, position, id) { }
+
+        public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
+        {
+            var rookMoves = new Rook(Color, currentPosition, Id).GetPossibleMoves(currentPosition, board);
+            var bishopMoves = new Bishop(Color, currentPosition, Id).GetPossibleMoves(currentPosition, board);
+            return rookMoves.Concat(bishopMoves).ToList();
+        }
     }
 }

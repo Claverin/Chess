@@ -10,6 +10,7 @@ namespace Chess.Domain.Entities
         public Color Color { get; set; }
         public string Image { get; set; }
         public Field CurrentPosition { get; set; }
+        public bool HasMoved { get; set; } = false;
         public bool IsCaptured { get; set; } = false;
 
         [BsonIgnore]

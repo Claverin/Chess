@@ -1,4 +1,5 @@
 ﻿using Chess.Domain.Entities;
+using Chess.Domain.Entities.Pieces;
 using Chess.Domain.ValueObjects;
 
 namespace Chess.Extensions
@@ -15,31 +16,30 @@ namespace Chess.Extensions
                 NumberOfPlayers = original.NumberOfPlayers,
                 MoveHistory = new List<string>(original.MoveHistory),
                 Winner = original.Winner == null ? null : new Player
-                    {
-                        UserId = original.Winner.UserId,
-                        Name = original.Winner.Name,
-                        Colour = original.Winner.Colour,
-                        Score = original.Winner.Score,
-                        IsHuman = original.Winner.IsHuman
-                    },
+                {
+                    UserId = original.Winner.UserId,
+                    Name = original.Winner.Name,
+                    Colour = original.Winner.Colour,
+                    Score = original.Winner.Score,
+                    IsHuman = original.Winner.IsHuman
+                },
                 ActivePieceId = original.ActivePieceId,
                 AvailableMoves = original.AvailableMoves.Select(f => new Field(f.X, f.Y)).ToList(),
                 IsGameActive = original.IsGameActive,
                 DebugMode = original.DebugMode,
                 IsCheck = original.IsCheck,
                 IsCheckmate = original.IsCheckmate,
-                IsStalemate = original.IsStalemate
+                IsStalemate = original.IsStalemate,
+                Players = original.Players
+                    .Select(p => new Player
+                    {
+                        UserId = p.UserId,
+                        Name = p.Name,
+                        Colour = p.Colour,
+                        Score = p.Score,
+                        IsHuman = p.IsHuman
+                    }).ToList()
             };
-
-            clonedGame.Players = original.Players
-                .Select(p => new Player
-                {
-                    UserId = p.UserId,
-                    Name = p.Name,
-                    Colour = p.Colour,
-                    Score = p.Score,
-                    IsHuman = p.IsHuman
-                }).ToList();
 
             var clonedBoard = new Board();
             clonedBoard.Cells.Clear();

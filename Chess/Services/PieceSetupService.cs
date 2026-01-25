@@ -1,4 +1,5 @@
 ﻿using Chess.Domain.Entities;
+using Chess.Domain.Entities.Pieces;
 using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
 
@@ -49,21 +50,15 @@ namespace Chess.Services
 
         private Piece CreatePiece(Type pieceType, Color color, Field field, ref int nextId)
         {
-            switch (pieceType)
+            return pieceType switch
             {
-                case Type t when t == typeof(Rook):
-                    return new Rook(color, field, ++nextId);
-                case Type t when t == typeof(Knight):
-                    return new Knight(color, field, ++nextId);
-                case Type t when t == typeof(Bishop):
-                    return new Bishop(color, field, ++nextId);
-                case Type t when t == typeof(Queen):
-                    return new Queen(color, field, ++nextId);
-                case Type t when t == typeof(King):
-                    return new King(color, field, ++nextId);
-                default:
-                    throw new ArgumentException("Unsupported piece type");
-            }
+                Type t when t == typeof(Rook) => new Rook(color, field, ++nextId),
+                Type t when t == typeof(Knight) => new Knight(color, field, ++nextId),
+                Type t when t == typeof(Bishop) => new Bishop(color, field, ++nextId),
+                Type t when t == typeof(Queen) => new Queen(color, field, ++nextId),
+                Type t when t == typeof(King) => new King(color, field, ++nextId),
+                _ => throw new ArgumentException("Unsupported piece type"),
+            };
         }
     }
 }

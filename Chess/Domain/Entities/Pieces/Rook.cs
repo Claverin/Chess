@@ -2,42 +2,43 @@
 using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
 
-public class Rook : Piece
+namespace Chess.Domain.Entities.Pieces
 {
-    public bool HasMoved { get; set; } = false;
-
-    public Rook(Color color, Field position, int id) : base(color, position, id) { }
-
-    public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
+    public class Rook : Piece
     {
-        var moves = new List<Field>();
-        int[] dx = { 1, -1, 0, 0 };
-        int[] dy = { 0, 0, 1, -1 };
+        public Rook(Color color, Field position, int id) : base(color, position, id) { }
 
-        for (int dir = 0; dir < 4; dir++)
+        public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
         {
-            int x = currentPosition.X;
-            int y = currentPosition.Y;
+            var moves = new List<Field>();
+            int[] dx = { 1, -1, 0, 0 };
+            int[] dy = { 0, 0, 1, -1 };
 
-            while (true)
+            for (int dir = 0; dir < 4; dir++)
             {
-                x += dx[dir];
-                y += dy[dir];
+                int x = currentPosition.X;
+                int y = currentPosition.Y;
 
-                var cell = board.FindCellByCoordinates(x, y);
-                if (cell == null) break;
-
-                if (cell.Piece == null)
-                    moves.Add(cell.Field);
-                else
+                while (true)
                 {
-                    if (cell.Piece.Color != Color)
+                    x += dx[dir];
+                    y += dy[dir];
+
+                    var cell = board.FindCellByCoordinates(x, y);
+                    if (cell == null) break;
+
+                    if (cell.Piece == null)
                         moves.Add(cell.Field);
-                    break;
+                    else
+                    {
+                        if (cell.Piece.Color != Color)
+                            moves.Add(cell.Field);
+                        break;
+                    }
                 }
             }
-        }
 
-        return moves;
+            return moves;
+        }
     }
 }

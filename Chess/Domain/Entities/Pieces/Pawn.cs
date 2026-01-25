@@ -2,36 +2,39 @@
 using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
 
-public class Pawn : Piece
+namespace Chess.Domain.Entities.Pieces
 {
-    public Pawn(Color color, Field position, int id) : base(color, position, id) { }
-
-    public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
+    public class Pawn : Piece
     {
-        var moves = new List<Field>();
-        int direction = Color == Color.White ? -1 : 1;
-        int startRow = Color == Color.White ? 6 : 1;
+        public Pawn(Color color, Field position, int id) : base(color, position, id) { }
 
-        int x = currentPosition.X;
-        int y = currentPosition.Y;
-
-        var oneStep = board.FindCellByCoordinates(x, y + direction);
-        if (oneStep != null && oneStep.Piece == null)
+        public override List<Field> GetPossibleMoves(Field currentPosition, Board board)
         {
-            moves.Add(oneStep.Field);
+            var moves = new List<Field>();
+            int direction = Color == Color.White ? -1 : 1;
+            int startRow = Color == Color.White ? 6 : 1;
 
-            var twoStep = board.FindCellByCoordinates(x, y + 2 * direction);
-            if (y == startRow && twoStep?.Piece == null)
-                moves.Add(twoStep.Field);
+            int x = currentPosition.X;
+            int y = currentPosition.Y;
+
+            var oneStep = board.FindCellByCoordinates(x, y + direction);
+            if (oneStep != null && oneStep.Piece == null)
+            {
+                moves.Add(oneStep.Field);
+
+                var twoStep = board.FindCellByCoordinates(x, y + 2 * direction);
+                if (y == startRow && twoStep?.Piece == null)
+                    moves.Add(twoStep.Field);
+            }
+
+            foreach (int dx in new[] { -1, 1 })
+            {
+                var target = board.FindCellByCoordinates(x + dx, y + direction);
+                if (target?.Piece != null && target.Piece.Color != Color)
+                    moves.Add(target.Field);
+            }
+
+            return moves;
         }
-
-        foreach (int dx in new[] { -1, 1 })
-        {
-            var target = board.FindCellByCoordinates(x + dx, y + direction);
-            if (target?.Piece != null && target.Piece.Color != Color)
-                moves.Add(target.Field);
-        }
-
-        return moves;
     }
 }

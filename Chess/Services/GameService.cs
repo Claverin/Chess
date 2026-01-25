@@ -1,4 +1,5 @@
-﻿using Chess.Domain.Entities;
+﻿// GameService.cs
+using Chess.Domain.Entities;
 using Chess.Domain.Enums;
 using Chess.Interfaces.Repository;
 using Chess.Interfaces.Services;
@@ -9,22 +10,25 @@ namespace Chess.Services
     public class GameService : IGameService
     {
         private readonly GameSetupService _gameSetupService;
-        private readonly MovementPieceService _movementPieceService;
+        private readonly PieceSelectionService _pieceSelectionService;
+        private readonly GameMoveApplier _gameMoveApplier;
         private readonly IUserIdentifierService _userIdentifierService;
-        private readonly IGameRulesService _rulesService;
+        private readonly IGameRulesService _gameRulesService;
         private readonly IGameRepository _gameRepository;
 
         public GameService(
             GameSetupService gameSetupService,
-            MovementPieceService movementPieceService,
+            PieceSelectionService pieceSelectionService,
+            GameMoveApplier gameMoveApplier,
             IUserIdentifierService userIdentifierService,
-            IGameRulesService rulesService,
+            IGameRulesService gameRulesService,
             IGameRepository gameRepository)
         {
-            _userIdentifierService = userIdentifierService;
             _gameSetupService = gameSetupService;
-            _movementPieceService = movementPieceService;
-            _rulesService = rulesService;
+            _pieceSelectionService = pieceSelectionService;
+            _gameMoveApplier = gameMoveApplier;
+            _userIdentifierService = userIdentifierService;
+            _gameRulesService = gameRulesService;
             _gameRepository = gameRepository;
         }
 
@@ -32,7 +36,6 @@ namespace Chess.Services
         {
             var userId = RequireUserId();
             var active = await _gameRepository.GetActive(userId);
-
             return active ?? await _gameRepository.GetLast(userId);
         }
 
@@ -66,7 +69,7 @@ namespace Chess.Services
             var game = await _gameRepository.GetActive(userId);
             if (game == null || !game.IsGameActive) return null;
 
-            game = _movementPieceService.SelectPieceAndHighlightMoves(game, pieceId);
+            game = _pieceSelectionService.SelectPieceAndHighlightMoves(game, pieceId);
             await _gameRepository.Save(game);
             return game;
         }
@@ -85,53 +88,15 @@ namespace Chess.Services
             if (piece == null)
                 return game;
 
-            int fromX = piece.CurrentPosition.X;
-            int fromY = piece.CurrentPosition.Y;
-            bool isCastling = piece is King && Math.Abs(x - fromX) == 2;
-
             var targetCell = game.Board.FindCellByCoordinates(x, y);
-            var legalMoves = _rulesService.GetLegalMoves(game, piece);
+            if (targetCell == null) return game;
+
+            var legalMoves = _gameRulesService.GetLegalMoves(game, piece);
 
             if (!legalMoves.Any(f => f.X == x && f.Y == y))
                 return game;
 
-            if (targetCell.Piece != null)
-            {
-                var captured = game.Board.Pieces.FirstOrDefault(p =>
-                    p.Id == targetCell.Piece.Id &&
-                    p.Color == targetCell.Piece.Color);
-
-                if (captured != null)
-                    captured.IsCaptured = true;
-            }
-
-            var fromCell = game.Board.FindCellByCoordinates(fromX, fromY);
-            if (fromCell != null)
-                fromCell.Piece = null;
-
-            piece.CurrentPosition = targetCell.Field;
-            targetCell.Piece = piece;
-
-            if (isCastling)
-            {
-                int rookFromX = (x == 6) ? 7 : 0;
-                int rookToX = (x == 6) ? 5 : 3;
-
-                var rookCell = game.Board.FindCellByCoordinates(rookFromX, fromY);
-                if (rookCell?.Piece is Rook rook)
-                {
-                    rookCell.Piece = null;
-
-                    var rookTarget = game.Board.FindCellByCoordinates(rookToX, fromY);
-                    rook.CurrentPosition = rookTarget.Field;
-                    rookTarget.Piece = rook;
-
-                    rook.HasMoved = true;
-                }
-            }
-
-            if (piece is King k) k.HasMoved = true;
-            if (piece is Rook r) r.HasMoved = true;
+            _gameMoveApplier.ApplyMove(game, piece, targetCell.Field);
 
             game.ActivePieceId = null;
             game.AvailableMoves.Clear();
@@ -142,9 +107,9 @@ namespace Chess.Services
             var nextColor = (Color)(((int)game.CurrentPlayerColor + 1) % game.NumberOfPlayers);
             game.CurrentPlayerColor = nextColor;
 
-            game.IsCheck = _rulesService.IsKingInCheck(game, nextColor);
-            game.IsCheckmate = _rulesService.IsCheckmate(game, nextColor);
-            game.IsStalemate = _rulesService.IsStalemate(game, nextColor);
+            game.IsCheck = _gameRulesService.IsKingInCheck(game, nextColor);
+            game.IsCheckmate = _gameRulesService.IsCheckmate(game, nextColor);
+            game.IsStalemate = _gameRulesService.IsStalemate(game, nextColor);
 
             if (game.IsCheckmate || game.IsStalemate)
             {
@@ -169,7 +134,7 @@ namespace Chess.Services
                 if (piece == null) continue;
                 if (piece.IsCaptured || piece.Color != game.CurrentPlayerColor) continue;
 
-                var moves = _rulesService.GetLegalMoves(game, piece);
+                var moves = _gameRulesService.GetLegalMoves(game, piece);
                 piece.HasAnyLegalMove = moves.Any();
             }
         }
