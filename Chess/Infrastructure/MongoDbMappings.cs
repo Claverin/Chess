@@ -1,28 +1,32 @@
 ﻿using Chess.Domain.Entities;
+using Chess.Domain.Entities.Pieces;
 using MongoDB.Bson.Serialization;
 
-public static class MongoDbMappings
+namespace Chess.Infrastructure
 {
-    public static void RegisterClassMaps()
+    public static class MongoDbMappings
     {
-        if (!BsonClassMap.IsClassMapRegistered(typeof(Piece)))
+        public static void RegisterClassMaps()
         {
-            BsonClassMap.RegisterClassMap<Piece>(cm =>
+            if (!BsonClassMap.IsClassMapRegistered(typeof(Piece)))
             {
-                cm.AutoMap();
-                cm.SetIsRootClass(true);
-            });
-        }
+                BsonClassMap.RegisterClassMap<Piece>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIsRootClass(true);
+                });
+            }
 
-        foreach (var pieceType in new[]
-        {
+            foreach (var pieceType in new[]
+            {
             typeof(Pawn), typeof(Rook), typeof(Knight),
             typeof(Bishop), typeof(Queen), typeof(King)
         })
-        {
-            if (!BsonClassMap.IsClassMapRegistered(pieceType))
             {
-                BsonClassMap.RegisterClassMap(new BsonClassMap(pieceType));
+                if (!BsonClassMap.IsClassMapRegistered(pieceType))
+                {
+                    BsonClassMap.RegisterClassMap(new BsonClassMap(pieceType));
+                }
             }
         }
     }

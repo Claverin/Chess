@@ -1,4 +1,5 @@
 ﻿using Chess.Domain.Entities;
+using Chess.Domain.Entities.Pieces;
 using Chess.Domain.Enums;
 using Chess.Domain.ValueObjects;
 using Chess.Extensions;
@@ -8,6 +9,13 @@ namespace Chess.Services
 {
     public class GameRulesService : IGameRulesService
     {
+        private readonly GameMoveApplier _gameMoveApplier;
+
+        public GameRulesService(GameMoveApplier gameMoveApplier)
+        {
+            _gameMoveApplier = gameMoveApplier;
+        }
+
         public bool IsKingInCheck(Game game, Color color)
         {
             var king = game.Board.Pieces
@@ -63,28 +71,11 @@ namespace Chess.Services
                 var clonedPiece = clonedGame.Board.Pieces
                     .First(p => p.Id == piece.Id && p.Color == piece.Color && !p.IsCaptured);
 
-                int fromX = clonedPiece.CurrentPosition.X;
-                int fromY = clonedPiece.CurrentPosition.Y;
-
-                var fromCell = clonedGame.Board.FindCellByCoordinates(fromX, fromY);
-                var toCell = clonedGame.Board.FindCellByCoordinates(move.X, move.Y);
-
-                if (toCell.Piece != null)
-                    toCell.Piece.IsCaptured = true;
-
-                fromCell.Piece = null;
-                toCell.Piece = clonedPiece;
-                clonedPiece.CurrentPosition = move;
-
-                if (clonedPiece is King && Math.Abs(move.X - fromX) == 2)
-                {
-                    ApplyCastlingRookMove(clonedGame, fromY, move.X);
-                }
+                _gameMoveApplier.ApplyMove(clonedGame, clonedPiece, move);
 
                 if (!IsKingInCheck(clonedGame, clonedPiece.Color))
                     legalMoves.Add(move);
             }
-
             return legalMoves;
         }
 
@@ -128,22 +119,6 @@ namespace Chess.Services
             if (game.Board.FindCellByCoordinates(1, y).Piece != null) return false;
 
             return true;
-        }
-
-        private void ApplyCastlingRookMove(Game game, int y, int kingToX)
-        {
-            int rookFromX = (kingToX == 6) ? 7 : 0;
-            int rookToX = (kingToX == 6) ? 5 : 3;
-
-            var rookCell = game.Board.FindCellByCoordinates(rookFromX, y);
-            if (rookCell.Piece is not Rook rook)
-                return;
-
-            rookCell.Piece = null;
-
-            var rookTarget = game.Board.FindCellByCoordinates(rookToX, y);
-            rook.CurrentPosition = rookTarget.Field;
-            rookTarget.Piece = rook;
         }
     }
 }

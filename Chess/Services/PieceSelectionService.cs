@@ -4,13 +4,13 @@ using Chess.Interfaces.Services;
 
 namespace Chess.Services
 {
-    public class MovementPieceService
+    public class PieceSelectionService
     {
-        private readonly IGameRulesService _rulesService;
+        private readonly IGameRulesService _gameRulesService;
 
-        public MovementPieceService(IGameRulesService rulesService)
+        public PieceSelectionService(IGameRulesService gameRulesService)
         {
-            _rulesService = rulesService;
+            _gameRulesService = gameRulesService;
         }
 
         public Game SelectPieceAndHighlightMoves(Game game, int pieceId)
@@ -24,7 +24,7 @@ namespace Chess.Services
                 return game;
             }
 
-            var possibleMoves = _rulesService.GetLegalMoves(game, piece);
+            var possibleMoves = _gameRulesService.GetLegalMoves(game, piece);
             game.AvailableMoves = possibleMoves;
             HighlightCells(game, possibleMoves);
             game.ActivePieceId = pieceId;

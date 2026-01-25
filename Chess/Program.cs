@@ -5,7 +5,6 @@ using Chess.Interfaces.Services;
 using Chess.Services;
 using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
-
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
@@ -36,7 +35,8 @@ builder.Services.AddScoped<IUserIdentifierService, UserIdentifierService>();
 builder.Services.AddScoped<GameSetupService>();
 builder.Services.AddScoped<BoardSetupService>();
 builder.Services.AddScoped<PieceSetupService>();
-builder.Services.AddScoped<MovementPieceService>();
+builder.Services.AddScoped<GameMoveApplier>();
+builder.Services.AddScoped<PieceSelectionService>();
 builder.Services.AddScoped<IGameRulesService, GameRulesService>();
 
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
